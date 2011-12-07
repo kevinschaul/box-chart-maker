@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Box chart maker</title>
+    <meta name="description" content="">
+    <meta name="author" content="Kevin Schaul">
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <style type="text/css">
+      /* Override some defaults */
+      html, body {
+        background-color: #eee;
+      }
+      body {
+        padding-top: 40px; /* 40px to make the container go all the way to the bottom of the topbar */
+      }
+      .container > footer p {
+        text-align: center; /* center align it with the container */
+      }
+      .container {
+        width: 940px;
+      }
+
+      /* The white background content wrapper */
+      .content {
+        background-color: #fff;
+        padding: 20px;
+        margin: 0 -20px; /* negative indent the amount of the padding to maintain the grid system */
+        -webkit-border-radius: 0 0 6px 6px;
+           -moz-border-radius: 0 0 6px 6px;
+                border-radius: 0 0 6px 6px;
+        -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.15);
+           -moz-box-shadow: 0 1px 2px rgba(0,0,0,.15);
+                box-shadow: 0 1px 2px rgba(0,0,0,.15);
+      }
+
+      /* Page header tweaks */
+      .page-header {
+        background-color: #f5f5f5;
+        padding: 20px 20px 10px;
+        margin: -20px -20px 20px;
+      }
+
+      /* Give a quick and non-cross-browser friendly divider */
+      .content .span8 {
+        margin-left: 0;
+        padding-left: 19px;
+        border-left: 1px solid #eee;
+      }
+
+      .topbar .btn {
+        border: 0;
+      }
+
+    </style>
+    
+    <style type="text/css">
+
+</style>
+    
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/logic.js"></script>
+
+  </head>
+
+  <body>
+
+    <div class="topbar">
+      <div class="fill">
+        <div class="container">
+          <a class="brand" href="http://www.kevinschaul.com">KevinSchaul.com</a>
+          <ul class="nav">
+            <li><a href="#">View code on GitHub</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="content">
+        <div class="page-header">
+          <h1>Box chart maker <small>A tool for journalists</small></h1>
+        </div>
+        <div class="row">
+            <div class="span16">
+                <div class="alert-message info">
+                    <p>This is a very early version, and is under development.</p>
+                    <p>Have an idea? Open an <a href="#">issue</a> on GitHub.</p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+          <div class="span8">
+            <form>
+            <fieldset>
+            <h2>Choose your options</h2>
+            <div class="boxmkr_form">
+                <div class="clearfix">
+                    <label for="boxmkr_form_numBoxes">Number of boxes</label>
+                    <div class="input">
+                        <input type="text" class="span2" id="boxmkr_form_numBoxes" value="36">
+                    </div>
+                </div>
+                <div class="clearfix">
+                    <label for="boxmkr_form_rowLength">Row length</label>
+                    <div class="input">
+                        <input type="text" class="span2" id="boxmkr_form_rowLength" value="10">
+                    </div>
+                </div>
+                <div class="clearfix">
+                    <label for="boxmkr_form_label">Label</label>
+                    <div class="input">
+                        <input type="text" id="boxmkr_form_label" value="Data title">
+                    </div>
+                </div>
+            </div>
+            <h4>Advanced options</h4>
+            <div class="clearfix">
+                    <label for="boxmkr_form_gravity">Gravity direction</label>
+                    <div class="input">
+                        <select class="medium" id="boxmkr_form_gravity">
+                            <option value="lower-left">Lower left</option>
+                            <option value="upper-left">Upper left</option>
+                        </select>
+                    </div>
+                </div>
+            <div class="boxmkr_form">
+                <div class="clearfix">
+                    <label for="boxmkr_form_color">Color</label>
+                    <div class="input">
+                    <input type="text" id="boxmkr_form_color" value="#4A777A">
+                    </div>
+                </div>
+                <div class="clearfix">
+                    <label for="boxmkr_form_color_hover">Hover color</label>
+                    <div class="input">
+                        <input type="text" id="boxmkr_form_color_hover" value="#73B1B7">
+                    </div>
+                </div>
+                <div class="clearfix">
+                    <label for="boxmkr_form_box_dimensions">Box dimensions (px)</label>
+                    <div class="input">
+                        <input type="text" class="span2" id="boxmkr_form_box_dimensions" value="15">
+                    </div>
+                </div>
+                <div class="clearfix">
+                    <label for="boxmkr_form_box_padding">Box margin (px)</label>
+                    <div class="input">
+                        <input type="text" class="span2" id="boxmkr_form_box_margin" value="2">
+                    </div>
+                </div>
+            </div>
+            <div class="actions">
+                <input type="submit" id="boxmkr_form_submit" class="btn primary" value="Update">
+            </div>
+          </div>
+          </fieldset>
+          </form>
+          <div class="span8">
+            <h3>Preview</h3>
+            <div id="boxmkr_css"></div>
+            <div id="boxmkr_target"></div>
+            <h3>Embed code</h3>
+            <div id="boxmkr_embed"></div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <p>&copy; Kevin Schaul 2011</p>
+      </footer>
+
+    </div> <!-- /container -->
+
+  </body>
+</html>
