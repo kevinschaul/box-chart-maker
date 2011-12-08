@@ -6,8 +6,21 @@ var color;
 var hoverColor;
 
 $(document).ready(function() {
+    initValidation();
     updatePreview();
-    $('#boxmkr_form_submit').click(updatePreview);
+    $('#boxmkr_form_submit').click(function() {
+        if (performValidations()) {
+            updatePreview();
+        } else {
+            var html = '';
+            html += '<div class="alert-message error">\n';
+            html += '\t' + '<p><strong>Uh oh!</strong> There is a problem with your input.</p>\n';
+            html += '</div>\n';
+            $('#boxmkr_preview_message_area').html(html).show('fast');
+        }
+        // Return false to override default submit behavior
+        return false;
+    });
 });
 
 function updatePreview() {
@@ -16,8 +29,6 @@ function updatePreview() {
     writeJS();
     drawGraphic();
     initBoxMkrHovers();
-    // Return false to override default submit behavior
-    return false;
 }
 
 function captureInput() {
@@ -59,7 +70,6 @@ function writeCSS() {
     html += '\t' + 'width: ' + parseInt(rowLength) * (parseInt(boxDimensions) + parseInt(boxMargin)) + 'px;\n';
     html += '}\n';
     html += '</style>\n';
-    console.log(html);
     $('#boxmkr_css').html(html);
     $('#boxmkr_embed').html('<pre>' + $('<div/>').text(html).html() + '</pre>');
 }
@@ -72,7 +82,6 @@ function writeJS() {
     html += '});\n';
     html += initBoxMkrHovers;
     html += '\n' + '</script>';
-    console.log(html);
     $('#boxmkr_embed').append('<pre>' + $('<div/>').text(html).html() + '</pre>');
 }
 
@@ -133,4 +142,112 @@ function initBoxMkrHovers() {
             $(this).removeClass('boxmkr_hover');
         }
     );
+}
+
+function initValidation() {
+    $('#boxmkr_form_numBoxes').change(function() {
+        clearPreviewMessages();
+        validateNum(0, 1000, $('#boxmkr_form_numBoxes').val(), '#boxmkr_form_numBoxes');
+    });
+    $('#boxmkr_form_rowLength').change(function() {
+        clearPreviewMessages();
+        validateNum(0, 100, $('#boxmkr_form_rowLength').val(), '#boxmkr_form_rowLength');
+    });
+    $('#boxmkr_form_label').change(function() {
+        clearPreviewMessages();
+        validateLabel($('#boxmkr_form_label').val(), '#boxmkr_form_label');
+    });
+    $('#boxmkr_form_color').change(function() {
+        clearPreviewMessages();
+        validateHex($('#boxmkr_form_color').val(), '#boxmkr_form_color');
+    });
+    $('#boxmkr_form_color_hover').change(function() {
+        clearPreviewMessages();
+        validateHex($('#boxmkr_form_color_hover').val(), '#boxmkr_form_color_hover');
+    });
+    $('#boxmkr_form_box_dimensions').change(function() {
+        clearPreviewMessages();
+        validateNum(0, 100, $('#boxmkr_form_box_dimensions').val(), '#boxmkr_form_box_dimensions');
+    });
+   $('#boxmkr_form_box_margin').change(function() {
+       clearPreviewMessages();
+        validateNum(0, 25, $('#boxmkr_form_box_margin').val(), '#boxmkr_form_box_margin');
+    });
+}
+
+function performValidations() {
+    valid = true;
+    if (valid && !validateNum(0, 1000, $('#boxmkr_form_numBoxes').val(), '#boxmkr_form_numBoxes')) {
+        valid = false;
+    }
+    if (valid && !validateNum(0, 100, $('#boxmkr_form_rowLength').val(), '#boxmkr_form_rowLength')) {
+        valid = false;
+    }
+    if (valid && !validateLabel($('#boxmkr_form_label').val(), '#boxmkr_form_label')) {
+        valid = false;
+    }
+    if (valid && !validateHex($('#boxmkr_form_color').val(), '#boxmkr_form_color')) {
+        valid = false;
+    }
+    if (valid && !validateHex($('#boxmkr_form_color_hover').val(), '#boxmkr_form_color_hover')) {
+        valid = false;
+    }
+    if (valid && !validateHex($('#boxmkr_form_color_hover').val(), '#boxmkr_form_color_hover')) {
+        valid = false;
+    }
+    if (valid && !validateNum(0, 100, $('#boxmkr_form_box_dimensions').val(), '#boxmkr_form_box_dimensions')) {
+        valid = false;
+    }
+    if (valid && !validateNum(0, 25, $('#boxmkr_form_box_margin').val(), '#boxmkr_form_box_margin')) {
+        valid = false;
+    }
+    return valid;
+}
+
+function validateNum(min, max, value, selector) {
+    clearInputFeedback(selector);
+    var re = /^[0-9]+$/;
+    if (value >= min && value <= max && re.exec(value)) {
+        //addInputFeedback(selector, 'success');
+        return true;
+    } else {
+        addInputFeedback(selector, 'error');
+        return false;
+    }
+}
+
+function validateHex(value, selector) {
+    clearInputFeedback(selector);
+    var re = /^#([A-Za-z0-9]{6})$/;
+    if (re.exec(value)) {
+        //addInputFeedback(selector, 'success');
+        return true;
+    } else {
+        addInputFeedback(selector, 'error');
+        return false;
+    }
+}
+
+function validateLabel(value, selector) {
+    clearInputFeedback(selector);
+    var re = /^[^<>]*$/;
+    if (re.exec(value)) {
+        //addInputFeedback(selector, 'success');
+        return true;
+    } else {
+        addInputFeedback(selector, 'error');
+        return false;
+    }
+}
+
+function clearInputFeedback(selector) {
+    $(selector).parents('.clearfix.boxmkr_input').removeClass('error').removeClass('success');
+}
+
+function addInputFeedback(selector, feedback) {
+    $(selector).parents('.clearfix.boxmkr_input').addClass(feedback);
+}
+
+function clearPreviewMessages() {
+    $('#boxmkr_preview_message_area').hide('fast');
 }
