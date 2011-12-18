@@ -42,15 +42,20 @@
         margin: -20px -20px 20px;
       }
 
-      /* Give a quick and non-cross-browser friendly divider */
-      .content .span8 {
-        margin-left: 0;
-        padding-left: 19px;
-        border-left: 1px solid #eee;
-      }
-
       .topbar .btn {
         border: 0;
+      }
+
+      #advanced_options {
+          display:none;
+      }
+
+      #embed_code {
+          display:none;
+      }
+      
+      #boxmkr_form_add, #boxmkr_form_export {
+          display:none;
       }
 
     </style>
@@ -92,80 +97,117 @@
             </div>
         </div>
         <div class="row">
-          <div class="span8">
+            <div class="span16">
+                <h3>Preview</h3>
+                <div id="boxmkr_preview_message_area"></div>
+                <div id="boxmkr_css"></div>
+                <div id="boxmkr_target"></div>
+            </div>
+        </div>
+        <div class="row">
+          <div class="span16">
             <form>
             <fieldset>
-            <h2>Choose your options</h2>
-            <div class="boxmkr_form">
-                <div class="clearfix boxmkr_input">
-                    <label for="boxmkr_form_numBoxes">Number of boxes</label>
-                    <div class="input">
-                        <input type="text" class="span2" id="boxmkr_form_numBoxes" value="36">
+            <div class="row">
+                <div class="span8" id="options">
+                <h2>Choose your options</h2>
+                    <div class="boxmkr_form">
+                        <div class="clearfix boxmkr_input">
+                            <label for="boxmkr_form_numBoxes">Number of boxes</label>
+                            <div class="input">
+                                <input type="text" class="span2" id="boxmkr_form_numBoxes" value="36">
+                            </div>
+                        </div>
+                        <div class="clearfix boxmkr_input">
+                            <label for="boxmkr_form_rowLength">Row length</label>
+                            <div class="input">
+                                <input type="text" class="span2" id="boxmkr_form_rowLength" value="10">
+                            </div>
+                        </div>
+                        <div class="clearfix boxmkr_input">
+                            <label for="boxmkr_form_label">Label</label>
+                            <div class="input">
+                                <input type="text" id="boxmkr_form_label" value="Data title">
+                            </div>
+                        </div>
+                    </div>
+                    <a href="#" id="boxmkr_toggle_advanced_options">Show advanced options</a>
+                </div>
+                <div class="span8" id="advanced_options">
+                    <div id="advanced_options_header">
+                        <h4>Advanced options</h4>
+                    </div>
+                    <div class="clearfix boxmkr_input">
+                            <label for="boxmkr_form_box_id">Box ID</label>
+                            <div class="input">
+                                <input type="text" id="boxmkr_form_box_id" value="box1">
+                            </div>
+                        </div>
+                    <div class="clearfix boxmkr_input">
+                            <label for="boxmkr_form_gravity">Gravity direction</label>
+                            <div class="input">
+                                <select class="medium" id="boxmkr_form_gravity">
+                                    <option value="lower-left">Lower left</option>
+                                    <option value="upper-left">Upper left</option>
+                                </select>
+                            </div>
+                        </div>
+                    <div class="boxmkr_form">
+                        <div class="clearfix boxmkr_input">
+                            <label for="boxmkr_form_color">Color</label>
+                            <div class="input">
+                            <input type="text" id="boxmkr_form_color" value="#4A777A">
+                            </div>
+                        </div>
+                        <div class="clearfix boxmkr_input">
+                            <label for="boxmkr_form_color_hover">Hover color</label>
+                            <div class="input">
+                                <input type="text" id="boxmkr_form_color_hover" value="#73B1B7">
+                            </div>
+                        </div>
+                        <div class="clearfix boxmkr_input">
+                            <label for="boxmkr_form_box_dimensions">Box dimensions (px)</label>
+                            <div class="input">
+                                <input type="text" class="span2" id="boxmkr_form_box_dimensions" value="15">
+                            </div>
+                        </div>
+                        <div class="clearfix boxmkr_input">
+                            <label for="boxmkr_form_box_padding">Box margin (px)</label>
+                            <div class="input">
+                                <input type="text" class="span2" id="boxmkr_form_box_margin" value="2">
+                            </div>
+                        </div>
+                        <div class="clearfix boxmkr_input">
+                            <label for="bmkr_form_json_input">JSON input</label>
+                            <div class="input">
+                                <textarea id="boxmkr_form_json_input" rows="5"></textarea>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="clearfix boxmkr_input">
-                    <label for="boxmkr_form_rowLength">Row length</label>
-                    <div class="input">
-                        <input type="text" class="span2" id="boxmkr_form_rowLength" value="10">
+                <div class="span16">
+                    <div class="actions">
+                        <input type="submit" id="boxmkr_form_submit" class="btn primary" value="Update">
+                        <input type="submit" id="boxmkr_form_add" class="btn default" value="Add to visualization">
+                        <input type="submit" id="boxmkr_form_export" class="btn default" value="Export JSON">
                     </div>
-                </div>
-                <div class="clearfix boxmkr_input">
-                    <label for="boxmkr_form_label">Label</label>
-                    <div class="input">
-                        <input type="text" id="boxmkr_form_label" value="Data title">
-                    </div>
-                </div>
-            </div>
-            <h4>Advanced options</h4>
-            <div class="clearfix boxmkr_input">
-                    <label for="boxmkr_form_gravity">Gravity direction</label>
-                    <div class="input">
-                        <select class="medium" id="boxmkr_form_gravity">
-                            <option value="lower-left">Lower left</option>
-                            <option value="upper-left">Upper left</option>
-                        </select>
-                    </div>
-                </div>
-            <div class="boxmkr_form">
-                <div class="clearfix boxmkr_input">
-                    <label for="boxmkr_form_color">Color</label>
-                    <div class="input">
-                    <input type="text" id="boxmkr_form_color" value="#4A777A">
-                    </div>
-                </div>
-                <div class="clearfix boxmkr_input">
-                    <label for="boxmkr_form_color_hover">Hover color</label>
-                    <div class="input">
-                        <input type="text" id="boxmkr_form_color_hover" value="#73B1B7">
-                    </div>
-                </div>
-                <div class="clearfix boxmkr_input">
-                    <label for="boxmkr_form_box_dimensions">Box dimensions (px)</label>
-                    <div class="input">
-                        <input type="text" class="span2" id="boxmkr_form_box_dimensions" value="15">
-                    </div>
-                </div>
-                <div class="clearfix boxmkr_input">
-                    <label for="boxmkr_form_box_padding">Box margin (px)</label>
-                    <div class="input">
-                        <input type="text" class="span2" id="boxmkr_form_box_margin" value="2">
-                    </div>
-                </div>
-            </div>
-            <div class="actions">
-                <input type="submit" id="boxmkr_form_submit" class="btn primary" value="Update">
-            </div>
+                  </div>
+              </div>
           </div>
           </fieldset>
           </form>
-          <div class="span8">
-            <h3>Preview</h3>
-            <div id="boxmkr_preview_message_area"></div>
-            <div id="boxmkr_css"></div>
-            <div id="boxmkr_target"></div>
-            <h3>Embed code</h3>
-            <div id="boxmkr_embed"></div>
           </div>
+          <div class="row">
+              <div class="span16">
+                  <a href="#" id="boxmkr_toggle_embed_code">Show embed code</a>
+              </div>
+              <div class="span16" id="embed_code">
+                <h3>Embed code</h3>
+                <div id="boxmkr_embed_json"></div>
+                <div id="boxmkr_embed_css"></div>
+                <div id="boxmkr_embed_js"></div>
+                <div id="boxmkr_embed_html"></div>
+              </div>
         </div>
       </div>
 

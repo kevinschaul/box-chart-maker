@@ -4,6 +4,7 @@ var numBoxes;
 var label;
 var color;
 var hoverColor;
+var boxID;
 
 $(document).ready(function() {
     initValidation();
@@ -21,31 +22,121 @@ $(document).ready(function() {
         // Return false to override default submit behavior
         return false;
     });
+    $('#boxmkr_form_add').click(function() {
+        if (performValidations()) {
+            addVisualization();
+        }
+        // Return false to override default submit behavior
+        return false;
+    });
+    $('#boxmkr_form_export').click(function() {
+        if (performValidations()) {
+            exportJSON();
+        }
+        // Return false to override default submit behavior
+        return false;
+    });
+    $('#boxmkr_toggle_advanced_options').click(function() {
+        if ($('#advanced_options').is(':visible')) {
+            $('#advanced_options').hide('slow');
+            $('#boxmkr_toggle_advanced_options').html('Show advanced options');
+        } else {
+            $('#advanced_options').show('slow');
+            $('#boxmkr_toggle_advanced_options').html('Hide advanced options');
+        }
+        return false;
+    });
+    $('#boxmkr_toggle_embed_code').click(function() {
+        if ($('#embed_code').is(':visible')) {
+            $('#embed_code').hide('slow');
+            $('#boxmkr_toggle_embed_code').html('Show embed code');
+        } else {
+            $('#embed_code').show('slow');
+            $('#boxmkr_toggle_embed_code').html('Hide embed code');
+        }
+        return false;
+    });
 });
 
 function updatePreview() {
     captureInput();
     writeCSS();
     writeJS();
-    drawGraphic();
+    var html = drawGraphic();
+    writeGraphic(html);
     initBoxMkrHovers();
 }
 
+function addVisualization() {
+    captureInput();
+    visualizationHtml += drawGraphic();
+}
+
 function captureInput() {
-    numBoxes = $('#boxmkr_form_numBoxes').val();
-    rowLength = $('#boxmkr_form_rowLength').val();
-    label = $('#boxmkr_form_label').val();
-    gravity = $('#boxmkr_form_gravity').val();
-    color = $('#boxmkr_form_color').val();
-    hoverColor = $('#boxmkr_form_color_hover').val();
-    boxDimensions = $('#boxmkr_form_box_dimensions').val();
-    boxMargin = $('#boxmkr_form_box_margin').val();
+    jsonInput = $('#boxmkr_form_json_input').val();
+    if (jsonInput) {
+        parseJSON(jsonInput);
+    } else {
+        numBoxes = $('#boxmkr_form_numBoxes').val();
+        rowLength = $('#boxmkr_form_rowLength').val();
+        label = $('#boxmkr_form_label').val();
+        gravity = $('#boxmkr_form_gravity').val();
+        color = $('#boxmkr_form_color').val();
+        hoverColor = $('#boxmkr_form_color_hover').val();
+        boxDimensions = $('#boxmkr_form_box_dimensions').val();
+        boxMargin = $('#boxmkr_form_box_margin').val();
+        boxID = $('#boxmkr_form_box_id').val();
+    }
+}
+
+function createJSON() {
+    var json = [];
+    json.push(
+        {
+            "boxmkr": {
+                "numBoxes": numBoxes,
+                "rowLength": rowLength,
+                "label": label,
+                "gravity": gravity,
+                "color": color,
+                "hoverColor": hoverColor,
+                "boxDimensions": boxDimensions,
+                "boxMargin": boxMargin,
+                "boxID": boxID
+            }
+        }
+    );
+    $("#boxmkr_embed_json").html("<pre>" + JSON.stringify(json) + "</pre>");
+}
+
+function exportJSON() {
+    captureInput();
+    createJSON();
+}
+
+function parseJSON(jsonInput) {
+    var obj = $.parseJSON(jsonInput);
+    for (var info in obj) {
+        console.log(obj[info]);
+        if (obj.hasOwnProperty(info)) {
+            boxChart = obj[info];
+            numBoxes = boxChart.boxDimensions;
+            rowLength = boxChart.rowLength;
+            label = boxChart.label;
+            gravity = boxChart.gravity;
+            color = boxChart.color;
+            hoverColor = boxChart.hoverColor;
+            boxDimensions = boxChart.boxDimensions;
+            boxMargin = boxChart.boxMargin;
+            boxID = boxChart.boxID;
+        }
+    }
 }
 
 function writeCSS() {
     var html = '';
     html += '<style type="text/css">\n';
-    html += '.boxmkr_box { \n';
+    html += '#boxmkr_' + boxID + ' .boxmkr_box { \n';
     html += '\t' + 'float: left;\n';
     html += '\t' + 'background-color: ' + color + ';\n';
     html += '\t' + 'height: ' + boxDimensions + 'px;\n';
@@ -53,25 +144,26 @@ function writeCSS() {
     html += '\t' + 'margin-left: ' + boxMargin + 'px;\n';
     html += '\t' + 'margin-bottom: ' + boxMargin + 'px;\n';
     html += '}\n';
-    html += '.boxmkr_box.boxmkr_hover { \n';
+    html += '#boxmkr_' + boxID + ' .boxmkr_box.boxmkr_hover { \n';
     html += '\t' + 'background-color: ' + hoverColor + ';\n';
     html += '}\n';
-    html += '.boxmkr_box.boxmkr_beginner { \n';
+    html += '#boxmkr_' + boxID + ' .boxmkr_box.boxmkr_beginner { \n';
     html += '\t' + 'clear:both;\n';
     html += '}\n';
-    html += '.boxmkr_label { \n';
+    html += '#boxmkr_' + boxID + ' .boxmkr_label { \n';
     html += '\t' + 'clear: both;\n';
     html += '\t' + 'font-family: arial,sans-serif;\n';
     html += '\t' + 'font-size: 13px;\n';
     html += '\t' + 'font-weight: bold;\n';
     html += '\t' + 'text-align: center;\n';
     html += '}\n';
-    html += '.boxmkr_wrapper { \n';
+    html += '#boxmkr_' + boxID + ' { \n';
     html += '\t' + 'width: ' + parseInt(rowLength) * (parseInt(boxDimensions) + parseInt(boxMargin)) + 'px;\n';
     html += '}\n';
     html += '</style>\n';
     $('#boxmkr_css').html(html);
-    $('#boxmkr_embed').html('<pre>' + $('<div/>').text(html).html() + '</pre>');
+    $('#boxmkr_embed_css').html('<pre>' + $('<div/>').text(html).html() + '</pre>');
+    return html;
 }
 
 function writeJS() {
@@ -82,12 +174,17 @@ function writeJS() {
     html += '});\n';
     html += initBoxMkrHovers;
     html += '\n' + '</script>';
-    $('#boxmkr_embed').append('<pre>' + $('<div/>').text(html).html() + '</pre>');
+    $('#boxmkr_embed_js').html('<pre>' + $('<div/>').text(html).html() + '</pre>');
+    return html;
+}
+
+function writeGraphic(html) {
+    $('#boxmkr_embed_html').html('<pre>' + $('<div/>').text(html).html() + '</pre>');
 }
 
 function drawGraphic() {
     var html = '';
-    html += '<div class="boxmkr_wrapper">\n';
+    html += '<div class="boxmkr_wrapper" id="' + 'boxmkr_' + boxID + '">\n';
     var boxesLeft = numBoxes;
     var numRows = Math.floor(numBoxes / rowLength);
     var numStragglers = numBoxes % rowLength;
@@ -99,11 +196,11 @@ function drawGraphic() {
         html += writeStragglers(numStragglers);
         html += writeFullRows(numRows, rowLength);
     }
-    
+
     html += '\t<div class="boxmkr_label">' + label + '</div>\n';
-    html += '</div>'; // closes .boxmkr_wrapper
+    html += '</div>\n'; // closes .boxmkr_wrapper
     $('#boxmkr_target').html(html);
-    $('#boxmkr_embed').append('<pre>' + $('<div/>').text(html).html() + '</pre>');
+    return html;
 }
 
 function writeFullRows(numRows, rowLength) {
