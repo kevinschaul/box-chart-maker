@@ -5,14 +5,6 @@ Inspired by Washington Post's [presidential pardons interactive graphic](http://
 
 Live demo [here](http://www.kevinschaul.com/projects/box-chart-maker/).
 
-### TODO
-
-* Add error handling
-* Clean up interface (embed code, hide advanced options, etc.)
-* Hover/click events
-* Option to import JSON for hover/click with data
-
-
 ## Release notes
 
 ### 12/6/2011
