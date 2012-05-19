@@ -56,6 +56,17 @@ $(document).ready(function() {
         }
         return false;
     });
+    
+    $("#colorpicker").farbtastic("#boxmkr_form_color");
+    $("#hovercolorpicker").farbtastic("#boxmkr_form_color_hover");
+    $('#colorpicker').hide();
+    $('#hovercolorpicker').hide();
+    $('#boxmkr_form_color').click(function() {
+        $('#colorpicker').toggle('slow');
+    });
+    $('#boxmkr_form_color_hover').click(function() {
+        $('#hovercolorpicker').toggle('slow');
+    });
 });
 
 function updatePreview() {

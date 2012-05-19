@@ -7,6 +7,7 @@
     <meta name="author" content="Kevin Schaul">
 
     <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="js/lib/farbtastic/farbtastic.css" rel="stylesheet">
     <style type="text/css">
       /* Override some defaults */
       html, body {
@@ -65,9 +66,7 @@
 </style>
     
     <script type="text/javascript" src="js/lib/jquery.min.js"></script>
-    <script type="text/javascript" src="js/lib/raphael-min.js"></script>
-    <script type="text/javascript" src="js/lib/underscore-min.js"></script>
-    <script type="text/javascript" src="js/lib/backbone-min.js"></script>
+    <script type="text/javascript" src="js/lib/farbtastic/farbtastic.js"></script>
     <script type="text/javascript" src="js/logic.js"></script>
 
   </head>
@@ -159,13 +158,15 @@
                         <div class="clearfix boxmkr_input">
                             <label for="boxmkr_form_color">Color</label>
                             <div class="input">
-                            <input type="text" id="boxmkr_form_color" value="#4A777A">
+                                <input type="text" id="boxmkr_form_color" value="#4A777A">
+                                <div id="colorpicker"></div>
                             </div>
                         </div>
                         <div class="clearfix boxmkr_input">
                             <label for="boxmkr_form_color_hover">Hover color</label>
                             <div class="input">
                                 <input type="text" id="boxmkr_form_color_hover" value="#73B1B7">
+                                <div id="hovercolorpicker"></div>
                             </div>
                         </div>
                         <div class="clearfix boxmkr_input">
@@ -215,7 +216,7 @@
       </div>
 
       <footer>
-        <p>&copy; Kevin Schaul 2011</p>
+        <p>&copy; Kevin Schaul 2012</p>
       </footer>
 
     </div> <!-- /container -->
