@@ -6,18 +6,25 @@ var color;
 var hoverColor;
 var boxID;
 
+var errorElement = "#error";
+
+function displayError(description) {
+    var message = "<div class=\"alert-message error\"><p><strong>Uh oh!</strong> " + description + "</p></div>";
+    $(errorElement).html(message).show("fast");
+}
+
 $(document).ready(function() {
+
+    $(errorElement).hide();
+
+
     initValidation();
     updatePreview();
     $('#boxmkr_form_submit').click(function() {
         if (performValidations()) {
             updatePreview();
         } else {
-            var html = '';
-            html += '<div class="alert-message error">\n';
-            html += '\t' + '<p><strong>Uh oh!</strong> There is a problem with your input.</p>\n';
-            html += '</div>\n';
-            $('#boxmkr_preview_message_area').html(html).show('fast');
+            displayError("There is a problem with your input.");
         }
         // Return false to override default submit behavior
         return false;
