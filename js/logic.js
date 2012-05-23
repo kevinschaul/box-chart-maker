@@ -13,10 +13,17 @@ function displayError(description) {
     $(errorElement).html(message).show("fast");
 }
 
+function initUI() {
+    $(errorElement).hide();
+    $("#colorpicker").farbtastic("#boxmkr_form_color");
+    $("#hovercolorpicker").farbtastic("#boxmkr_form_color_hover");
+    $('#colorpicker').hide();
+    $('#hovercolorpicker').hide();
+}
+
 $(document).ready(function() {
 
-    $(errorElement).hide();
-
+    initUI();
 
     initValidation();
     updatePreview();
@@ -64,10 +71,6 @@ $(document).ready(function() {
         return false;
     });
     
-    $("#colorpicker").farbtastic("#boxmkr_form_color");
-    $("#hovercolorpicker").farbtastic("#boxmkr_form_color_hover");
-    $('#colorpicker').hide();
-    $('#hovercolorpicker').hide();
     $('#boxmkr_form_color').click(function() {
         $('#colorpicker').toggle('slow');
     });
