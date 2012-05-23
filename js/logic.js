@@ -79,6 +79,7 @@ function initEventListeners() {
 $(document).ready(function() {
 
     initUI();
+    var input = new Input();
 
     initValidation();
     updatePreview();
@@ -99,65 +100,29 @@ function addVisualization() {
     visualizationHtml += drawGraphic();
 }
 
-function captureInput() {
-    jsonInput = $('#boxmkr_form_json_input').val();
-    if (jsonInput) {
-        parseJSON(jsonInput);
-    } else {
-        numBoxes = $('#boxmkr_form_numBoxes').val();
-        rowLength = $('#boxmkr_form_rowLength').val();
-        label = $('#boxmkr_form_label').val();
-        gravity = $('#boxmkr_form_gravity').val();
-        color = $('#boxmkr_form_color').val();
-        hoverColor = $('#boxmkr_form_color_hover').val();
-        boxDimensions = $('#boxmkr_form_box_dimensions').val();
-        boxMargin = $('#boxmkr_form_box_margin').val();
-        boxID = $('#boxmkr_form_box_id').val();
-    }
+function Input() {
+    return this;
 }
 
-function createJSON() {
-    var json = [];
-    json.push(
-        {
-            "boxmkr": {
-                "numBoxes": numBoxes,
-                "rowLength": rowLength,
-                "label": label,
-                "gravity": gravity,
-                "color": color,
-                "hoverColor": hoverColor,
-                "boxDimensions": boxDimensions,
-                "boxMargin": boxMargin,
-                "boxID": boxID
-            }
-        }
-    );
-    $("#boxmkr_embed_json").html("<pre>" + JSON.stringify(json) + "</pre>");
-}
+Input.prototype.retrieveChartOptions = function() {
+    var numBoxes = $('#boxmkr_form_numBoxes').val(); 
+    //TODO numBoxes -> numElements everywhere
+    var rowLength = $('#boxmkr_form_rowLength').val();
+    var label = $('#boxmkr_form_label').val();
+    var gravity = $('#boxmkr_form_gravity').val();
+    var color = $('#boxmkr_form_color').val();
+    //var hoverColor = $('#boxmkr_form_color_hover').val();
+    //var boxDimensions = $('#boxmkr_form_box_dimensions').val();
+    //var boxMargin = $('#boxmkr_form_box_margin').val();
+    //var boxID = $('#boxmkr_form_box_id').val();
 
-function exportJSON() {
-    captureInput();
-    createJSON();
-}
-
-function parseJSON(jsonInput) {
-    var obj = $.parseJSON(jsonInput);
-    for (var info in obj) {
-        console.log(obj[info]);
-        if (obj.hasOwnProperty(info)) {
-            boxChart = obj[info];
-            numBoxes = boxChart.boxDimensions;
-            rowLength = boxChart.rowLength;
-            label = boxChart.label;
-            gravity = boxChart.gravity;
-            color = boxChart.color;
-            hoverColor = boxChart.hoverColor;
-            boxDimensions = boxChart.boxDimensions;
-            boxMargin = boxChart.boxMargin;
-            boxID = boxChart.boxID;
-        }
-    }
+    var options = {
+        title: label,
+        color: color,
+        rowLength: rowLength,
+        numItems: numBoxes,
+    };
+    return options;
 }
 
 function writeCSS() {
@@ -382,8 +347,7 @@ function validateLabel(value, selector) {
 }
 
 function clearInputFeedback(selector) {
-    $(selector).parents('.clearfix.boxmkr_input').removeClass('error')
-            .removeClass('success');
+    $(selector).parents('.clearfix.boxmkr_input').removeClass('error').removeClass('success');
 }
 
 function addInputFeedback(selector, feedback) {
