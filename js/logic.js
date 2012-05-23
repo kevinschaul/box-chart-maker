@@ -76,14 +76,15 @@ function initEventListeners() {
 
 }
 
-var input;
-var chart;
+//var input;
+//var chart;
 
 $(document).ready(function() {
 
     initUI();
-    window.input = new Input();
-    window.chart = new Chart();
+    var input = new Input();
+    var chart = new Chart();
+    chart.render();
 
     initValidation();
     updatePreview();
@@ -91,9 +92,6 @@ $(document).ready(function() {
 });
 
 function updatePreview() {
-    captureInput();
-    writeCSS();
-    writeJS();
     var html = drawGraphic();
     writeGraphic(html);
     initBoxMkrHovers();
@@ -165,7 +163,7 @@ function Chart(numItems) {
     this.color = "#A77EE4";
     this.rowLength = 10;
     this.numItems = numItems;
-    this.element = $("body");
+    this.element = $("#chart");
     this.items = [];
     for (var i = 0; i < this.numItems; i++) {
         this.items[i] = new Box();
@@ -185,53 +183,6 @@ Chart.prototype.render = function() {
     return this;
 }
 
-function writeCSS() {
-    var html = '';
-    html += '<style type="text/css">\n';
-    html += '#boxmkr_' + boxID + ' .boxmkr_box { \n';
-    html += '\t' + 'float: left;\n';
-    html += '\t' + 'background-color: ' + color + ';\n';
-    html += '\t' + 'height: ' + boxDimensions + 'px;\n';
-    html += '\t' + 'width: ' + boxDimensions + 'px;\n';
-    html += '\t' + 'margin-left: ' + boxMargin + 'px;\n';
-    html += '\t' + 'margin-bottom: ' + boxMargin + 'px;\n';
-    html += '}\n';
-    html += '#boxmkr_' + boxID + ' .boxmkr_box.boxmkr_hover { \n';
-    html += '\t' + 'background-color: ' + hoverColor + ';\n';
-    html += '}\n';
-    html += '#boxmkr_' + boxID + ' .boxmkr_box.boxmkr_beginner { \n';
-    html += '\t' + 'clear:both;\n';
-    html += '}\n';
-    html += '#boxmkr_' + boxID + ' .boxmkr_label { \n';
-    html += '\t' + 'clear: both;\n';
-    html += '\t' + 'font-family: arial,sans-serif;\n';
-    html += '\t' + 'font-size: 13px;\n';
-    html += '\t' + 'font-weight: bold;\n';
-    html += '\t' + 'text-align: center;\n';
-    html += '}\n';
-    html += '#boxmkr_' + boxID + ' { \n';
-    html += '\t' + 'width: ' + parseInt(rowLength) * (parseInt(boxDimensions)
-            + parseInt(boxMargin)) + 'px;\n';
-    html += '}\n';
-    html += '</style>\n';
-    $('#boxmkr_css').html(html);
-    $('#boxmkr_embed_css').html('<pre>' + $('<div/>').text(html).html()
-            + '</pre>');
-    return html;
-}
-
-function writeJS() {
-    var html = '';
-    html = '<script type="text/javascript">\n';
-    html += '$(document).ready(function() {\n';
-    html += '\t' + 'initBoxMkrHovers();\n';
-    html += '});\n';
-    html += initBoxMkrHovers;
-    html += '\n' + '</script>';
-    $('#boxmkr_embed_js').html('<pre>' + $('<div/>').text(html).html()
-        + '</pre>');
-    return html;
-}
 
 function writeGraphic(html) {
     $('#boxmkr_embed_html').html('<pre>' + $('<div/>').text(html).html()
