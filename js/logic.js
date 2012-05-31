@@ -22,13 +22,188 @@ function initUI() {
     $('#hovercolorpicker').hide();
 }
 
-function initEventListeners() {
+var input;
+
+$(document).ready(function() {
+
+    initUI();
+//    var input = new Input();
+    input = new Input();
+    input.render();
+});
+
+function updatePreview() {
+    var html = drawGraphic();
+    writeGraphic(html);
+    initBoxMkrHovers();
+}
+
+function addVisualization() {
+    captureInput();
+    visualizationHtml += drawGraphic();
+}
+
+// TODO make this static (or whatever is proper in javascript)
+var num = 0;
+
+function Box() {
+    this.num = ++num;
+    this.color = "#A77EE4";
+    this.data = {
+        name: "Kevin Schaul",
+        school: "University of Minnesota"
+    };
+    return this;
+}
+// TODO are these necessary? if so, add for Chart, too
+Box.prototype.color = "Color";
+Box.prototype.data = "Data";
+
+Box.prototype.setData = function(dataKey, dataValue) {
+    this.data[dataKey] = dataValue;
+    return dataValue;
+}
+
+Box.prototype.getData = function(dataKey) {
+    return this.data[dataKey];
+}
+
+function Chart() {
+    this.activeInput = false;
+    this.type = "box";
+    this.title = "Title";
+    this.color = "#A77EE4";
+    this.rowLength = 10;
+    this.numItems = 36;
+    this.element = $("#chart");
+    this.items = [];
+    return this;
+}
+
+Chart.prototype.setOption = function(option, value) {
+    this[option] = value; //TODO wrap this in try/except
+    return this;
+}
+
+Chart.prototype.render = function() {
+    this.items = [];
+    for (var i = 0; i < this.numItems; i++) {
+        this.items[i] = new Box();
+    }
+    for (var i = 0; i < this.items.length; i++) {
+        var item = this.items[i];
+        if (i % this.rowLength === 0) {
+            $(this.element).append("<div class=\"box\""
+                    + " style=\"background-color:" + item.color 
+                    + ";clear:both;\"></div>");
+        } else {
+            $(this.element).append("<div class=\"box\""
+                    + " style=\"background-color:" + item.color 
+                    + ";\"></div>");
+        }
+    }
+    return this;
+}
+
+function Input() {
+    this.chart = new Array(new Chart());
+    this.chart[0].activeInput = true;
+    this.valid = true;
+    var that = this;
+    $('#boxmkr_form_submit').click(function() {
+         if (that.validateInput()) {
+             that.setActiveChartOptions();
+             that.render();
+         } else {
+             displayError("There is a problem with your input.");
+         }
+        return false;
+    });
+    $('#boxmkr_form_add').click(function() {
+        if (performValidations()) {
+            addVisualization();
+        }
+        return false;
+    });
+    $('#boxmkr_form_export').click(function() {
+        if (performValidations()) {
+            exportJSON();
+        }
+        return false;
+    });
+    $('#boxmkr_toggle_advanced_options').click(function() {
+        if ($('#advanced_options').is(':visible')) { //TODO change these to jQuery toggles
+            $('#advanced_options').hide('slow');
+            $('#boxmkr_toggle_advanced_options').html('Show advanced options');
+        } else {
+            $('#advanced_options').show('slow');
+            $('#boxmkr_toggle_advanced_options').html('Hide advanced options');
+        }
+        return false;
+    });
+    $('#boxmkr_toggle_embed_code').click(function() {
+        if ($('#embed_code').is(':visible')) {
+            $('#embed_code').hide('slow');
+            $('#boxmkr_toggle_embed_code').html('Show embed code');
+        } else {
+            $('#embed_code').show('slow');
+            $('#boxmkr_toggle_embed_code').html('Hide embed code');
+        }
+        return false;
+    });
+    $('#boxmkr_form_color').click(function() {
+        $('#colorpicker').toggle('slow');
+    });
+    $('#boxmkr_form_color_hover').click(function() {
+        $('#hovercolorpicker').toggle('slow');
+    });
+    return this;
+}
+
+Input.prototype.render = function() {
+    $(this.chart[0].element).empty(); //TODO make element a part of Input
+    for (var i = 0; i < this.chart.length; i++) {
+        this.chart[i].render();
+    }
+    return this;
+}
+
+Input.prototype.setActiveChartOptions = function() {
+    var activeChart;
+    for (var i = 0; i < this.chart.length; i++) {
+        if (this.chart[i].activeInput) {
+            activeChart = this.chart[i];
+        }
+    }
+    activeChart.setOption("numItems", $("#boxmkr_form_numBoxes").val());
+    activeChart.setOption("rowLength", $("#boxmkr_form_rowLength").val());
+    activeChart.setOption("label", $("#boxmkr_form_label").val());
+    activeChart.setOption("gravity", $("#boxmkr_form_gravity").val());
+    activeChart.setOption("color", $("#boxmkr_form_color").val());
+    return this;
+}
+
+Input.prototype.validateInput = function() {
+    // TODO
+    this.valid = true;
+    return this;
+}
+
+Input.prototype.initEventListeners = function() {
      $('#boxmkr_form_submit').click(function() {
+         if (input.validateChartOptions()) {
+             console.log("valid");
+             this.render();
+         } else {
+             displayError("There is a problem with your input.");
+         }
+         /*
         if (performValidations()) {
             updatePreview();
         } else {
             displayError("There is a problem with your input.");
         }
+        */
         // Return false to override default submit behavior
         return false;
     });
@@ -73,115 +248,9 @@ function initEventListeners() {
     $('#boxmkr_form_color_hover').click(function() {
         $('#hovercolorpicker').toggle('slow');
     });
-
-}
-
-//var input;
-//var chart;
-
-$(document).ready(function() {
-
-    initUI();
-    var input = new Input();
-    var chart = new Chart();
-    chart.render();
-
-    initValidation();
-    updatePreview();
-    initEventListeners();
-});
-
-function updatePreview() {
-    var html = drawGraphic();
-    writeGraphic(html);
-    initBoxMkrHovers();
-}
-
-function addVisualization() {
-    captureInput();
-    visualizationHtml += drawGraphic();
-}
-
-function Input() {
     return this;
 }
 
-Input.prototype.retrieveChartOptions = function() {
-    var numBoxes = $('#boxmkr_form_numBoxes').val(); 
-    //TODO numBoxes -> numElements everywhere
-    var rowLength = $('#boxmkr_form_rowLength').val();
-    var label = $('#boxmkr_form_label').val();
-    var gravity = $('#boxmkr_form_gravity').val();
-    var color = $('#boxmkr_form_color').val();
-    //var hoverColor = $('#boxmkr_form_color_hover').val();
-    //var boxDimensions = $('#boxmkr_form_box_dimensions').val();
-    //var boxMargin = $('#boxmkr_form_box_margin').val();
-    //var boxID = $('#boxmkr_form_box_id').val();
-
-    var options = {
-        title: label,
-        color: color,
-        rowLength: rowLength,
-        numItems: numBoxes,
-    };
-    return options;
-}
-
-Input.prototype.validateChartOptions = function(options) {
-    // TODO
-    return options;
-}
-
-// TODO make this static (or whatever is proper in javascript)
-var num = 0;
-
-function Box() {
-    this.num = ++num;
-    this.color = "#A77EE4";
-    this.data = {
-        name: "Kevin Schaul",
-        school: "University of Minnesota"
-    };
-    return this;
-}
-// TODO are these necessary? if so, add for Chart, too
-Box.prototype.color = "Color";
-Box.prototype.data = "Data";
-
-Box.prototype.setData = function(dataKey, dataValue) {
-    this.data[dataKey] = dataValue;
-    return dataValue;
-}
-
-Box.prototype.getData = function(dataKey) {
-    return this.data[dataKey];
-}
-
-function Chart(numItems) {
-    this.type = "box";
-    this.title = "Title";
-    this.color = "#A77EE4";
-    this.rowLength = 10;
-    this.numItems = numItems;
-    this.element = $("#chart");
-    this.items = [];
-    for (var i = 0; i < this.numItems; i++) {
-        this.items[i] = new Box();
-    }
-    return this;
-}
-
-Chart.prototype.render = function() {
-    for (var i = 0; i < this.items.length; i++) {
-        var item = this.items[i];
-        if (i % this.rowLength === 0) {
-            $(this.element).append("<div class=\"box\" style=\"background-color:" + item.color + ";clear:both;\"></div>");
-        } else {
-            $(this.element).append("<div class=\"box\" style=\"background-color:" + item.color + ";\"></div>");
-        }
-    }
-    return this;
-}
 
 
 function writeGraphic(html) {
