@@ -95,11 +95,11 @@ Chart.prototype.render = function() {
         if (i % this.rowLength === 0) {
             $(this.element).append("<div class=\"box\""
                     + " style=\"background-color:" + item.color 
-                    + ";clear:both;\"></div>");
+                    + ";clear:both;\"></div>\n");
         } else {
             $(this.element).append("<div class=\"box\""
                     + " style=\"background-color:" + item.color 
-                    + ";\"></div>");
+                    + ";\"></div>\n");
         }
     }
     return this;
@@ -197,13 +197,6 @@ Input.prototype.initEventListeners = function() {
          } else {
              displayError("There is a problem with your input.");
          }
-         /*
-        if (performValidations()) {
-            updatePreview();
-        } else {
-            displayError("There is a problem with your input.");
-        }
-        */
         // Return false to override default submit behavior
         return false;
     });
@@ -229,6 +222,7 @@ Input.prototype.initEventListeners = function() {
             $('#advanced_options').show('slow');
             $('#boxmkr_toggle_advanced_options').html('Hide advanced options');
         }
+        // Return false to override default submit behavior
         return false;
     });
     $('#boxmkr_toggle_embed_code').click(function() {
@@ -239,6 +233,7 @@ Input.prototype.initEventListeners = function() {
             $('#embed_code').show('slow');
             $('#boxmkr_toggle_embed_code').html('Hide embed code');
         }
+        // Return false to override default submit behavior
         return false;
     });
     
@@ -251,9 +246,19 @@ Input.prototype.initEventListeners = function() {
     return this;
 }
 
+function Output() {
+    this.element = $("#output");
+    return this;
+}
 
+Output.prototype.showHtml = function() {
+    // TODO don't use input globally here
+    $(this.element).html("<pre>" + $(input.chart[0].element).html() + "</pre>");
+    return this;
+}
 
 function writeGraphic(html) {
+    // TODO
     $('#boxmkr_embed_html').html('<pre>' + $('<div/>').text(html).html()
         + '</pre>');
 }
