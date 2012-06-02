@@ -94,6 +94,7 @@ function Chart() {
     this.type = "box";
     this.title = "Data title";
     this.color = "#A77EE4";
+    this.hoverColor = "#73B1B7";
     this.rowLength = 10;
     this.numItems = 36;
     this.element = $("#chart");
@@ -115,13 +116,10 @@ Chart.prototype.render = function() {
     for (var i = 0; i < this.items.length; i++) {
         var item = this.items[i];
         if (i % this.rowLength === 0) {
-            $(this.element).append("<div class=\"box\""
-                    + " style=\"background-color:" + this.color 
-                    + ";clear:both;\"></div>\n");
+            $(this.element).append("<a class=\"box\""
+                    + " style=\"clear:both;\"></a>\n");
         } else {
-            $(this.element).append("<div class=\"box\""
-                    + " style=\"background-color:" + this.color 
-                    + ";\"></div>\n");
+            $(this.element).append("<a class=\"box\"></a>\n");
         }
     }
     return this;
@@ -186,6 +184,17 @@ Input.prototype.render = function() {
     $(this.chart[0].element).empty(); //TODO make element a part of Input
     for (var i = 0; i < this.chart.length; i++) {
         this.chart[i].render();
+        $(this.chart[i].element).append(
+            "\n\n" +
+            "<style type=text/css>\n" +
+            "   .box {\n" +
+            "       background-color: " + this.chart[i].color + ";\n" +
+            "   }\n" +
+            "   .box:hover {\n" +
+            "       background-color: " + this.chart[i].hoverColor + ";\n" +
+            "   }\n" +
+            "</style>"
+            );
     }
     return this;
 }
@@ -202,6 +211,7 @@ Input.prototype.setActiveChartOptions = function() {
     activeChart.setOption("title", $("#boxmkr_form_label").val());
     activeChart.setOption("gravity", $("#boxmkr_form_gravity").val());
     activeChart.setOption("color", $("#boxmkr_form_color").val());
+    activeChart.setOption("hoverColor", $("#boxmkr_form_color_hover").val());
     return this;
 }
 
