@@ -29,19 +29,28 @@ var bcm;
 $(document).ready(function() {
 
     initUI(); // TODO move this.
-    bcm = new BCM();
+    window.bcm = new BCM();
+    window.bcm.init();
 });
 
 function BCM() {
-    /* * *
+    /* *
     /* Main controller for all things Box Chart Maker
-    /* All initializing goes here
-    /* */
+    /* Instantiate other objects here
+     */
 
     this.input = new Input();
     this.output = new Output();
+}
 
-    this.input.render();
+BCM.prototype.init = function() {
+    /* *
+    /* Initialize here instead of in BCM() so that we can reference the `bcm`
+    /* instance.
+     */
+
+     this.input.render();
+     this.output.showHtml();
 }
 
 function updatePreview() {
@@ -83,7 +92,7 @@ Box.prototype.getData = function(dataKey) {
 function Chart() {
     this.activeInput = false;
     this.type = "box";
-    this.title = "Title";
+    this.title = "Data title";
     this.color = "#A77EE4";
     this.rowLength = 10;
     this.numItems = 36;
@@ -98,6 +107,7 @@ Chart.prototype.setOption = function(option, value) {
 }
 
 Chart.prototype.render = function() {
+    $(this.element).append("<h3 class=\"chartTitle\">" + this.title + "</h3>\n");
     this.items = [];
     for (var i = 0; i < this.numItems; i++) {
         this.items[i] = new Box();
@@ -189,7 +199,7 @@ Input.prototype.setActiveChartOptions = function() {
     }
     activeChart.setOption("numItems", $("#boxmkr_form_numBoxes").val());
     activeChart.setOption("rowLength", $("#boxmkr_form_rowLength").val());
-    activeChart.setOption("label", $("#boxmkr_form_label").val());
+    activeChart.setOption("title", $("#boxmkr_form_label").val());
     activeChart.setOption("gravity", $("#boxmkr_form_gravity").val());
     activeChart.setOption("color", $("#boxmkr_form_color").val());
     return this;
@@ -267,7 +277,7 @@ function Output() {
 
 Output.prototype.showHtml = function() {
     // TODO don't use input globally here
-    $(this.element).html("<pre>" + $("<div/>").text($(input.chart[0].element).html()).html() + "</pre>");
+    $(this.element).html("<pre>" + $("<div/>").text($(window.bcm.input.chart[0].element).html()).html() + "</pre>");
     return this;
 }
 
