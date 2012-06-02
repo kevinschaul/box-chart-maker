@@ -116,11 +116,11 @@ Chart.prototype.render = function() {
         var item = this.items[i];
         if (i % this.rowLength === 0) {
             $(this.element).append("<div class=\"box\""
-                    + " style=\"background-color:" + item.color 
+                    + " style=\"background-color:" + this.color 
                     + ";clear:both;\"></div>\n");
         } else {
             $(this.element).append("<div class=\"box\""
-                    + " style=\"background-color:" + item.color 
+                    + " style=\"background-color:" + this.color 
                     + ";\"></div>\n");
         }
     }
