@@ -81,7 +81,7 @@ function Chart() {
 }
 
 Chart.prototype.setOption = function(option, value) {
-    this[option] = value; //TODO wrap this in try/except
+    this[option] = value;
     return this;
 }
 
