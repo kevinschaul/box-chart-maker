@@ -1,34 +1,6 @@
-var gravity;
-var rowLength;
-var numBoxes;
-var label;
-var color;
-var hoverColor;
-var boxID;
-
-var errorElement = "#error";
-
-function displayError(description) {
-    // TODO move this function
-    var message = "<div class=\"alert-message error\">"
-            +  "<p><strong>Uh oh!</strong> " + description + "</p></div>";
-    $(errorElement).html(message).show("fast");
-}
-
-function initUI() {
-    // TODO move this function 
-    $(errorElement).hide();
-    $("#colorpicker").farbtastic("#boxmkr_form_color");
-    $("#hovercolorpicker").farbtastic("#boxmkr_form_color_hover");
-    $('#colorpicker').hide();
-    $('#hovercolorpicker').hide();
-}
-
 var bcm;
 
 $(document).ready(function() {
-
-    initUI(); // TODO move this.
     window.bcm = new BCM();
     window.bcm.init();
 });
@@ -50,19 +22,10 @@ BCM.prototype.init = function() {
      */
 
      this.input.render();
+     this.output.initUI();
      this.output.showHtml();
 }
 
-function updatePreview() {
-    var html = drawGraphic();
-    writeGraphic(html);
-    initBoxMkrHovers();
-}
-
-function addVisualization() {
-    captureInput();
-    visualizationHtml += drawGraphic();
-}
 
 // TODO make this static (or whatever is proper in javascript)
 var num = 0;
@@ -76,9 +39,6 @@ function Box() {
     };
     return this;
 }
-// TODO are these necessary? if so, add for Chart, too
-Box.prototype.color = "Color";
-Box.prototype.data = "Data";
 
 Box.prototype.setData = function(dataKey, dataValue) {
     this.data[dataKey] = dataValue;
@@ -135,7 +95,7 @@ function Input() {
              that.setActiveChartOptions();
              that.render();
          } else {
-             displayError("There is a problem with your input.");
+             bcm.output.displayError("There is a problem with your input.");
          }
         return false;
     });
@@ -227,7 +187,7 @@ Input.prototype.initEventListeners = function() {
              console.log("valid");
              this.render();
          } else {
-             displayError("There is a problem with your input.");
+             bcm.output.displayError("There is a problem with your input.");
          }
         // Return false to override default submit behavior
         return false;
@@ -282,14 +242,30 @@ Input.prototype.initEventListeners = function() {
 
 function Output() {
     this.element = $("#output");
+    this.errorElement = $("#error");
     return this;
 }
 
 Output.prototype.showHtml = function() {
-    // TODO don't use input globally here
     $(this.element).html("<pre>" + $("<div/>").text($(window.bcm.input.chart[0].element).html()).html() + "</pre>");
     return this;
 }
+
+Output.prototype.displayError = function(description) {
+    var message = "<div class=\"alert-message error\">"
+            +  "<p><strong>Uh oh!</strong> " + description + "</p></div>";
+    $(this.errorElement).html(message).show("fast");
+}
+
+Output.prototype.initUI = function() {
+    $(this.errorElement).hide();
+    $("#colorpicker").farbtastic("#boxmkr_form_color");
+    $("#hovercolorpicker").farbtastic("#boxmkr_form_color_hover");
+    $('#colorpicker').hide();
+    $('#hovercolorpicker').hide();
+}
+
+
 
 function initValidation() {
     $('#boxmkr_form_numBoxes').change(function() {
