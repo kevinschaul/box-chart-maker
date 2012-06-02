@@ -253,73 +253,8 @@ function Output() {
 
 Output.prototype.showHtml = function() {
     // TODO don't use input globally here
-    $(this.element).html("<pre>" + $(input.chart[0].element).html() + "</pre>");
+    $(this.element).html("<pre>" + $("<div/>").text($(input.chart[0].element).html()).html() + "</pre>");
     return this;
-}
-
-function writeGraphic(html) {
-    // TODO
-    $('#boxmkr_embed_html').html('<pre>' + $('<div/>').text(html).html()
-        + '</pre>');
-}
-
-function drawGraphic() {
-    var html = '';
-    html += '<div class="boxmkr_wrapper" id="' + 'boxmkr_' + boxID + '">\n';
-    var boxesLeft = numBoxes;
-    var numRows = Math.floor(numBoxes / rowLength);
-    var numStragglers = numBoxes % rowLength;
-    
-    if (gravity == 'upper-left') {
-        html += writeFullRows(numRows, rowLength);
-        html += writeStragglers(numStragglers);
-    } else if (gravity == 'lower-left') {
-        html += writeStragglers(numStragglers);
-        html += writeFullRows(numRows, rowLength);
-    }
-
-    html += '\t<div class="boxmkr_label">' + label + '</div>\n';
-    html += '</div>\n'; // closes .boxmkr_wrapper
-    $('#boxmkr_target').html(html);
-    return html;
-}
-
-function writeFullRows(numRows, rowLength) {
-    var html = '';
-    if (numRows > 0) {
-        for (var i = 0; i < numRows; i++) {
-            // Write the leading box
-            html += '\t<div class="boxmkr_box boxmkr_beginner"></div>\n';
-            // Since we wrote the leading box, skip one
-            for (var j = 0; j < rowLength - 1; j++) {
-                html += '\t<div class="boxmkr_box"></div>\n';
-            }
-        }
-    }
-    return html;
-}
-
-function writeStragglers(numStragglers) {
-    var html = '';
-    if (numStragglers > 0) {
-        var html = '';
-        html += '\t<div class="boxmkr_box boxmkr_beginner"></div>\n';
-        for (var i = 0; i < numStragglers - 1; i++) {
-            html += '\t<div class="boxmkr_box"></div>\n';
-        }
-    }
-    return html;
-}
-
-function initBoxMkrHovers() {
-    $('.boxmkr_box').hover(
-     function() {
-            $(this).addClass('boxmkr_hover');
-        },
-        function() {
-            $(this).removeClass('boxmkr_hover');
-        }
-    );
 }
 
 function initValidation() {
