@@ -9,12 +9,14 @@ var boxID;
 var errorElement = "#error";
 
 function displayError(description) {
+    // TODO move this function
     var message = "<div class=\"alert-message error\">"
             +  "<p><strong>Uh oh!</strong> " + description + "</p></div>";
     $(errorElement).html(message).show("fast");
 }
 
 function initUI() {
+    // TODO move this function 
     $(errorElement).hide();
     $("#colorpicker").farbtastic("#boxmkr_form_color");
     $("#hovercolorpicker").farbtastic("#boxmkr_form_color_hover");
@@ -22,15 +24,25 @@ function initUI() {
     $('#hovercolorpicker').hide();
 }
 
-var input;
+var bcm;
 
 $(document).ready(function() {
 
-    initUI();
-//    var input = new Input();
-    input = new Input();
-    input.render();
+    initUI(); // TODO move this.
+    bcm = new BCM();
 });
+
+function BCM() {
+    /* * *
+    /* Main controller for all things Box Chart Maker
+    /* All initializing goes here
+    /* */
+
+    this.input = new Input();
+    this.output = new Output();
+
+    this.input.render();
+}
 
 function updatePreview() {
     var html = drawGraphic();
@@ -245,6 +257,8 @@ Input.prototype.initEventListeners = function() {
     });
     return this;
 }
+
+
 
 function Output() {
     this.element = $("#output");
