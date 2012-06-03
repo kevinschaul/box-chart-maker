@@ -21,6 +21,7 @@ BCM.prototype.init = function() {
     /* instance.
      */
 
+     this.input.setActiveChartOptions();
      this.input.render();
      this.output.initUI();
      this.output.showHtml();
@@ -53,11 +54,13 @@ function Chart() {
     this.activeInput = false;
     this.type = "box";
     this.title = "Data title";
-    this.color = "#A77EE4";
-    this.hoverColor = "#73B1B7";
+    this.color = "#ra777a";
+    this.hoverColor = "#73b1b7";
     this.rowLength = 10;
     this.numItems = 36;
     this.element = $("#chart");
+    this.margin = 2;
+    this.dimensions = 15;
     this.items = [];
     return this;
 }
@@ -148,6 +151,11 @@ Input.prototype.render = function() {
             "\n\n" +
             "<style type=text/css>\n" +
             "   .box {\n" +
+            "       float: left;" +
+            "       margin-right: " + this.chart[i].margin  + "px;" +
+            "       margin-bottom: " + this.chart[i].margin  + "px;" +
+            "       height: " + this.chart[i].dimensions  + "px;" +
+            "       width: " + this.chart[i].dimensions  + "px;" +
             "       background-color: " + this.chart[i].color + ";\n" +
             "   }\n" +
             "   .box:hover {\n" +
@@ -172,6 +180,8 @@ Input.prototype.setActiveChartOptions = function() {
     activeChart.setOption("gravity", $("#boxmkr_form_gravity").val());
     activeChart.setOption("color", $("#boxmkr_form_color").val());
     activeChart.setOption("hoverColor", $("#boxmkr_form_color_hover").val());
+    activeChart.setOption("margin", $("#boxmkr_form_box_margin").val());
+    activeChart.setOption("dimensions", $("#boxmkr_form_box_dimensions").val());
     return this;
 }
 
