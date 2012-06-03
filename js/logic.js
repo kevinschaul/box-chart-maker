@@ -135,11 +135,21 @@ function Input() {
         }
         return false;
     });
-    $('#boxmkr_form_color').click(function() {
-        $('#colorpicker').toggle('slow');
+    $(document).click(function() {
+        $("#colorpicker").hide("slow");
+        $("#hovercolorpicker").hide("slow");
     });
-    $('#boxmkr_form_color_hover').click(function() {
-        $('#hovercolorpicker').toggle('slow');
+    $('#boxmkr_form_color').click(function(e) {
+        // Overrides document.click function
+        e.stopPropagation();
+        $('#colorpicker').show('slow');
+        $('#hovercolorpicker').hide('slow');
+    });
+    $('#boxmkr_form_color_hover').click(function(e) {
+        // Overrides document.click function
+        e.stopPropagation();
+        $('#hovercolorpicker').show('slow');
+        $('#colorpicker').hide('slow');
     });
     return this;
 }
