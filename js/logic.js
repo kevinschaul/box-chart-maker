@@ -185,9 +185,124 @@ Input.prototype.setActiveChartOptions = function() {
     return this;
 }
 
+Input.prototype.initValidation = function() {
+    $('#boxmkr_form_numBoxes').change(function() {
+        clearPreviewMessages();
+        validateNum(0, 1000, $('#boxmkr_form_numBoxes').val(),
+                '#boxmkr_form_numBoxes');
+    });
+    $('#boxmkr_form_rowLength').change(function() {
+        clearPreviewMessages();
+        validateNum(0, 100, $('#boxmkr_form_rowLength').val(),
+                '#boxmkr_form_rowLength');
+    });
+    $('#boxmkr_form_label').change(function() {
+        clearPreviewMessages();
+        validateLabel($('#boxmkr_form_label').val(), '#boxmkr_form_label');
+    });
+    $('#boxmkr_form_color').change(function() {
+        clearPreviewMessages();
+        validateHex($('#boxmkr_form_color').val(), '#boxmkr_form_color');
+    });
+    $('#boxmkr_form_color_hover').change(function() {
+        clearPreviewMessages();
+        validateHex($('#boxmkr_form_color_hover').val(),
+                '#boxmkr_form_color_hover');
+    });
+    $('#boxmkr_form_box_dimensions').change(function() {
+        clearPreviewMessages();
+        validateNum(0, 100, $('#boxmkr_form_box_dimensions').val(),
+                '#boxmkr_form_box_dimensions');
+    });
+   $('#boxmkr_form_box_margin').change(function() {
+       clearPreviewMessages();
+        validateNum(0, 25, $('#boxmkr_form_box_margin').val(),
+                '#boxmkr_form_box_margin');
+    });
+   return this;
+}
+
 Input.prototype.validateInput = function() {
-    // TODO
     this.valid = true;
+    if (this.valid && !this.validateNum(0, 1000, $('#boxmkr_form_numBoxes').val(),
+                '#boxmkr_form_numBoxes')) {
+        this.valid = false;
+    }
+    if (this.valid && !this.validateNum(0, 100, $('#boxmkr_form_rowLength').val(),
+                '#boxmkr_form_rowLength')) {
+        this.valid = false;
+    }
+    if (this.valid && !this.validateLabel($('#boxmkr_form_label').val(),
+                '#boxmkr_form_label')) {
+        this.valid = false;
+    }
+    if (this.valid && !this.validateHex($('#boxmkr_form_color').val(),
+                '#boxmkr_form_color')) {
+        this.valid = false;
+    }
+    if (this.valid && !this.validateHex($('#boxmkr_form_color_hover').val(),
+                '#boxmkr_form_color_hover')) {
+        this.valid = false;
+    }
+    if (this.valid && !this.validateNum(0, 100, $('#boxmkr_form_box_dimensions').val(),
+                '#boxmkr_form_box_dimensions')) {
+        this.valid = false;
+    }
+    if (this.valid && !this.validateNum(0, 25, $('#boxmkr_form_box_margin').val(),
+                '#boxmkr_form_box_margin')) {
+        this.valid = false;
+    }
+    return this;
+}
+
+Input.prototype.validateNum = function(min, max, value, selector) {
+    this.clearInputFeedback(selector);
+    var re = /^[0-9]+$/;
+    if (value >= min && value <= max && re.exec(value)) {
+        //addInputFeedback(selector, 'success');
+        return true;
+    } else {
+        this.addInputFeedback(selector, 'error');
+        return false;
+    }
+}
+
+Input.prototype.validateHex = function(value, selector) {
+    this.clearInputFeedback(selector);
+    var re = /^#([A-Za-z0-9]{6})$/;
+    if (re.exec(value)) {
+        //addInputFeedback(selector, 'success');
+        return true;
+    } else {
+        this.addInputFeedback(selector, 'error');
+        return false;
+    }
+}
+
+Input.prototype.validateLabel = function(value, selector) {
+    this.clearInputFeedback(selector);
+    var re = /^[^<>]*$/;
+    if (re.exec(value)) {
+        //addInputFeedback(selector, 'success');
+        return true;
+    } else {
+        this.addInputFeedback(selector, 'error');
+        return false;
+    }
+}
+
+Input.prototype.clearInputFeedback = function(selector) {
+    $(selector).parents('.clearfix.boxmkr_input').removeClass('error').removeClass('success');
+    return this;
+}
+
+Input.prototype.addInputFeedback = function(selector, feedback) {
+    $(selector).parents('.clearfix.boxmkr_input').addClass(feedback);
+    return this;
+}
+
+Input.prototype.clearPreviewMessages = function() {
+    $('#boxmkr_preview_message_area').hide('fast');
     return this;
 }
 
@@ -249,7 +364,6 @@ Input.prototype.initEventListeners = function() {
 }
 
 
-
 function Output() {
     this.element = $("#output");
     this.errorElement = $("#error");
@@ -275,9 +389,7 @@ Output.prototype.initUI = function() {
     $('#hovercolorpicker').hide();
 }
 
-
-
-function initValidation() {
+function validation() {
     $('#boxmkr_form_numBoxes').change(function() {
         clearPreviewMessages();
         validateNum(0, 1000, $('#boxmkr_form_numBoxes').val(),
@@ -311,89 +423,8 @@ function initValidation() {
         validateNum(0, 25, $('#boxmkr_form_box_margin').val(),
                 '#boxmkr_form_box_margin');
     });
+
+    return this;
 }
 
-function performValidations() {
-    valid = true;
-    if (valid && !validateNum(0, 1000, $('#boxmkr_form_numBoxes').val(),
-                '#boxmkr_form_numBoxes')) {
-        valid = false;
-    }
-    if (valid && !validateNum(0, 100, $('#boxmkr_form_rowLength').val(),
-                '#boxmkr_form_rowLength')) {
-        valid = false;
-    }
-    if (valid && !validateLabel($('#boxmkr_form_label').val(),
-                '#boxmkr_form_label')) {
-        valid = false;
-    }
-    if (valid && !validateHex($('#boxmkr_form_color').val(),
-                '#boxmkr_form_color')) {
-        valid = false;
-    }
-    if (valid && !validateHex($('#boxmkr_form_color_hover').val(),
-                '#boxmkr_form_color_hover')) {
-        valid = false;
-    }
-    if (valid && !validateHex($('#boxmkr_form_color_hover').val(),
-                '#boxmkr_form_color_hover')) {
-        valid = false;
-    }
-    if (valid && !validateNum(0, 100, $('#boxmkr_form_box_dimensions').val(),
-                '#boxmkr_form_box_dimensions')) {
-        valid = false;
-    }
-    if (valid && !validateNum(0, 25, $('#boxmkr_form_box_margin').val(),
-                '#boxmkr_form_box_margin')) {
-        valid = false;
-    }
-    return valid;
-}
 
-function validateNum(min, max, value, selector) {
-    clearInputFeedback(selector);
-    var re = /^[0-9]+$/;
-    if (value >= min && value <= max && re.exec(value)) {
-        //addInputFeedback(selector, 'success');
-        return true;
-    } else {
-        addInputFeedback(selector, 'error');
-        return false;
-    }
-}
-
-function validateHex(value, selector) {
-    clearInputFeedback(selector);
-    var re = /^#([A-Za-z0-9]{6})$/;
-    if (re.exec(value)) {
-        //addInputFeedback(selector, 'success');
-        return true;
-    } else {
-        addInputFeedback(selector, 'error');
-        return false;
-    }
-}
-
-function validateLabel(value, selector) {
-    clearInputFeedback(selector);
-    var re = /^[^<>]*$/;
-    if (re.exec(value)) {
-        //addInputFeedback(selector, 'success');
-        return true;
-    } else {
-        addInputFeedback(selector, 'error');
-        return false;
-    }
-}
-
-function clearInputFeedback(selector) {
-    $(selector).parents('.clearfix.boxmkr_input').removeClass('error').removeClass('success');
-}
-
-function addInputFeedback(selector, feedback) {
-    $(selector).parents('.clearfix.boxmkr_input').addClass(feedback);
-}
-
-function clearPreviewMessages() {
-    $('#boxmkr_preview_message_area').hide('fast');
-}
