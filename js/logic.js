@@ -151,17 +151,17 @@ Input.prototype.render = function() {
             "\n\n" +
             "<style type=text/css>\n" +
             "   .box {\n" +
-            "       float: left;" +
-            "       margin-right: " + this.chart[i].margin  + "px;" +
-            "       margin-bottom: " + this.chart[i].margin  + "px;" +
-            "       height: " + this.chart[i].dimensions  + "px;" +
-            "       width: " + this.chart[i].dimensions  + "px;" +
+            "       float: left;\n" +
+            "       margin-right: " + this.chart[i].margin  + "px;\n" +
+            "       margin-bottom: " + this.chart[i].margin  + "px;\n" +
+            "       height: " + this.chart[i].dimensions  + "px;\n" +
+            "       width: " + this.chart[i].dimensions  + "px;\n" +
             "       background-color: " + this.chart[i].color + ";\n" +
             "   }\n" +
             "   .box:hover {\n" +
             "       background-color: " + this.chart[i].hoverColor + ";\n" +
             "   }\n" +
-            "</style>"
+            "</style>\n"
             );
     }
     return this;
