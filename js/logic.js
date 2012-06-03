@@ -100,21 +100,10 @@ function Input() {
          if (that.validateInput().valid) {
              that.setActiveChartOptions();
              that.render();
+             bcm.output.showHtml();
          } else {
              bcm.output.displayError("There is a problem with your input.");
          }
-        return false;
-    });
-    $('#boxmkr_form_add').click(function() {
-        if (performValidations()) {
-            addVisualization();
-        }
-        return false;
-    });
-    $('#boxmkr_form_export').click(function() {
-        if (performValidations()) {
-            exportJSON();
-        }
         return false;
     });
     $('#boxmkr_toggle_advanced_options').click(function() {
