@@ -23,6 +23,7 @@ BCM.prototype.init = function() {
 
      this.input.setActiveChartOptions();
      this.input.render();
+     this.input.initValidation();
      this.output.initUI();
      this.output.showHtml();
 }
@@ -95,7 +96,8 @@ function Input() {
     this.valid = true;
     var that = this;
     $('#boxmkr_form_submit').click(function() {
-         if (that.validateInput()) {
+        console.log("submit");
+         if (that.validateInput().valid) {
              that.setActiveChartOptions();
              that.render();
          } else {
@@ -183,6 +185,7 @@ Input.prototype.setActiveChartOptions = function() {
     for (var i = 0; i < this.chart.length; i++) {
         if (this.chart[i].activeInput) {
             activeChart = this.chart[i];
+            // TODO add break?
         }
     }
     activeChart.setOption("numItems", $("#boxmkr_form_numBoxes").val());
@@ -198,37 +201,38 @@ Input.prototype.setActiveChartOptions = function() {
 }
 
 Input.prototype.initValidation = function() {
+    var that = this;
     $('#boxmkr_form_numBoxes').change(function() {
-        clearPreviewMessages();
-        validateNum(0, 1000, $('#boxmkr_form_numBoxes').val(),
+        bcm.output.clearError();
+        that.validateNum(0, 1000, $('#boxmkr_form_numBoxes').val(),
                 '#boxmkr_form_numBoxes');
     });
     $('#boxmkr_form_rowLength').change(function() {
-        clearPreviewMessages();
-        validateNum(0, 100, $('#boxmkr_form_rowLength').val(),
+        bcm.output.clearError();
+        that.validateNum(0, 100, $('#boxmkr_form_rowLength').val(),
                 '#boxmkr_form_rowLength');
     });
     $('#boxmkr_form_label').change(function() {
-        clearPreviewMessages();
-        validateLabel($('#boxmkr_form_label').val(), '#boxmkr_form_label');
+        bcm.output.clearError();
+        that.validateLabel($('#boxmkr_form_label').val(), '#boxmkr_form_label');
     });
     $('#boxmkr_form_color').change(function() {
-        clearPreviewMessages();
-        validateHex($('#boxmkr_form_color').val(), '#boxmkr_form_color');
+        bcm.output.clearError();
+        that.validateHex($('#boxmkr_form_color').val(), '#boxmkr_form_color');
     });
     $('#boxmkr_form_color_hover').change(function() {
-        clearPreviewMessages();
-        validateHex($('#boxmkr_form_color_hover').val(),
+        bcm.output.clearError();
+        that.validateHex($('#boxmkr_form_color_hover').val(),
                 '#boxmkr_form_color_hover');
     });
     $('#boxmkr_form_box_dimensions').change(function() {
-        clearPreviewMessages();
-        validateNum(0, 100, $('#boxmkr_form_box_dimensions').val(),
+        bcm.output.clearError();
+        that.validateNum(0, 100, $('#boxmkr_form_box_dimensions').val(),
                 '#boxmkr_form_box_dimensions');
     });
    $('#boxmkr_form_box_margin').change(function() {
-       clearPreviewMessages();
-        validateNum(0, 25, $('#boxmkr_form_box_margin').val(),
+       bcm.output.clearError();
+        that.validateNum(0, 25, $('#boxmkr_form_box_margin').val(),
                 '#boxmkr_form_box_margin');
     });
    return this;
@@ -270,6 +274,7 @@ Input.prototype.validateInput = function() {
 }
 
 Input.prototype.validateNum = function(min, max, value, selector) {
+    console.log("validateNum");
     this.clearInputFeedback(selector);
     var re = /^[0-9]+$/;
     if (value >= min && value <= max && re.exec(value)) {
@@ -317,13 +322,9 @@ Input.prototype.addInputFeedback = function(selector, feedback) {
     return this;
 }
 
-Input.prototype.clearPreviewMessages = function() {
-    $('#boxmkr_preview_message_area').hide('fast');
-    return this;
-}
-
 Input.prototype.initEventListeners = function() {
-     $('#boxmkr_form_submit').click(function() {
+     /*$('#boxmkr_form_submit').click(function() {
+         console.log("submit");
          if (input.validateChartOptions()) {
              console.log("valid");
              this.render();
@@ -333,6 +334,7 @@ Input.prototype.initEventListeners = function() {
         // Return false to override default submit behavior
         return false;
     });
+     */
     $('#boxmkr_form_add').click(function() {
         if (performValidations()) {
             addVisualization();
@@ -397,6 +399,12 @@ Output.prototype.displayError = function(description) {
     var message = "<div class=\"alert-message error\">"
             +  "<p><strong>Uh oh!</strong> " + description + "</p></div>";
     $(this.errorElement).html(message).show("fast");
+    return this;
+}
+
+Output.prototype.clearError = function() {
+    $(this.errorElement).hide("slow").empty();
+    return this;
 }
 
 Output.prototype.initUI = function() {
@@ -405,44 +413,6 @@ Output.prototype.initUI = function() {
     $("#hovercolorpicker").farbtastic("#boxmkr_form_color_hover");
     $('#colorpicker').hide();
     $('#hovercolorpicker').hide();
-}
-
-function validation() {
-    $('#boxmkr_form_numBoxes').change(function() {
-        clearPreviewMessages();
-        validateNum(0, 1000, $('#boxmkr_form_numBoxes').val(),
-                '#boxmkr_form_numBoxes');
-    });
-    $('#boxmkr_form_rowLength').change(function() {
-        clearPreviewMessages();
-        validateNum(0, 100, $('#boxmkr_form_rowLength').val(),
-                '#boxmkr_form_rowLength');
-    });
-    $('#boxmkr_form_label').change(function() {
-        clearPreviewMessages();
-        validateLabel($('#boxmkr_form_label').val(), '#boxmkr_form_label');
-    });
-    $('#boxmkr_form_color').change(function() {
-        clearPreviewMessages();
-        validateHex($('#boxmkr_form_color').val(), '#boxmkr_form_color');
-    });
-    $('#boxmkr_form_color_hover').change(function() {
-        clearPreviewMessages();
-        validateHex($('#boxmkr_form_color_hover').val(),
-                '#boxmkr_form_color_hover');
-    });
-    $('#boxmkr_form_box_dimensions').change(function() {
-        clearPreviewMessages();
-        validateNum(0, 100, $('#boxmkr_form_box_dimensions').val(),
-                '#boxmkr_form_box_dimensions');
-    });
-   $('#boxmkr_form_box_margin').change(function() {
-       clearPreviewMessages();
-        validateNum(0, 25, $('#boxmkr_form_box_margin').val(),
-                '#boxmkr_form_box_margin');
-    });
-
     return this;
 }
-
 
