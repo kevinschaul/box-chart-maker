@@ -29,11 +29,8 @@ BCM.prototype.init = function() {
 }
 
 
-// TODO make this static (or whatever is proper in javascript)
-var num = 0;
-
 function Box() {
-    this.num = ++num;
+    this.num = ++bcm.input.chart[0].num;
     this.color = "#A77EE4";
     this.data = {
         name: "Kevin Schaul",
@@ -51,6 +48,7 @@ Box.prototype.getData = function(dataKey) {
     return this.data[dataKey];
 }
 
+
 function Chart() {
     this.activeInput = false;
     this.type = "box";
@@ -62,6 +60,7 @@ function Chart() {
     this.element = $("#chart");
     this.margin = 2;
     this.dimensions = 15;
+    this.num = 0;
     this.items = [];
     return this;
 }
@@ -89,6 +88,7 @@ Chart.prototype.render = function() {
     }
     return this;
 }
+
 
 function Input() {
     this.chart = new Array(new Chart());
@@ -319,65 +319,6 @@ Input.prototype.clearInputFeedback = function(selector) {
 
 Input.prototype.addInputFeedback = function(selector, feedback) {
     $(selector).parents('.clearfix.boxmkr_input').addClass(feedback);
-    return this;
-}
-
-Input.prototype.initEventListeners = function() {
-     /*$('#boxmkr_form_submit').click(function() {
-         console.log("submit");
-         if (input.validateChartOptions()) {
-             console.log("valid");
-             this.render();
-         } else {
-             bcm.output.displayError("There is a problem with your input.");
-         }
-        // Return false to override default submit behavior
-        return false;
-    });
-     */
-    $('#boxmkr_form_add').click(function() {
-        if (performValidations()) {
-            addVisualization();
-        }
-        // Return false to override default submit behavior
-        return false;
-    });
-    $('#boxmkr_form_export').click(function() {
-        if (performValidations()) {
-            exportJSON();
-        }
-        // Return false to override default submit behavior
-        return false;
-    });
-    $('#boxmkr_toggle_advanced_options').click(function() {
-        if ($('#advanced_options').is(':visible')) {
-            $('#advanced_options').hide('slow');
-            $('#boxmkr_toggle_advanced_options').html('Show advanced options');
-        } else {
-            $('#advanced_options').show('slow');
-            $('#boxmkr_toggle_advanced_options').html('Hide advanced options');
-        }
-        // Return false to override default submit behavior
-        return false;
-    });
-    $('#boxmkr_toggle_embed_code').click(function() {
-        if ($('#embed_code').is(':visible')) {
-            $('#embed_code').hide('slow');
-            $('#boxmkr_toggle_embed_code').html('Show embed code');
-        } else {
-            $('#embed_code').show('slow');
-            $('#boxmkr_toggle_embed_code').html('Hide embed code');
-        }
-        // Return false to override default submit behavior
-        return false;
-    });
-    
-    $('#boxmkr_form_color').click(function() {
-        $('#colorpicker').toggle('slow');
-    });
-    $('#boxmkr_form_color_hover').click(function() {
-        $('#hovercolorpicker').toggle('slow');
-    });
     return this;
 }
 
