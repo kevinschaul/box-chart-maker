@@ -1,43 +1,113 @@
-var gravity;
-var rowLength;
-var numBoxes;
-var label;
-var color;
-var hoverColor;
-var boxID;
+var bcm;
 
 $(document).ready(function() {
-    initValidation();
-    updatePreview();
-    $('#boxmkr_form_submit').click(function() {
-        if (performValidations()) {
-            updatePreview();
+    window.bcm = new BCM();
+    window.bcm.init();
+});
+
+function BCM() {
+    /* *
+    /* Main controller for all things Box Chart Maker
+    /* Instantiate other objects here
+     */
+
+    this.input = new Input();
+    this.output = new Output();
+}
+
+BCM.prototype.init = function() {
+    /* *
+    /* Initialize here instead of in BCM() so that we can reference the `bcm`
+    /* instance.
+     */
+
+     this.input.setActiveChartOptions();
+     this.input.render();
+     this.input.initValidation();
+     this.output.initUI();
+     this.output.showHtml();
+}
+
+
+function Box() {
+    this.num = ++bcm.input.chart[0].num;
+    this.color = "#A77EE4";
+    this.data = {
+        name: "Kevin Schaul",
+        school: "University of Minnesota"
+    };
+    return this;
+}
+
+Box.prototype.setData = function(dataKey, dataValue) {
+    this.data[dataKey] = dataValue;
+    return dataValue;
+}
+
+Box.prototype.getData = function(dataKey) {
+    return this.data[dataKey];
+}
+
+
+function Chart() {
+    this.activeInput = false;
+    this.type = "box";
+    this.title = "Data title";
+    this.color = "#ra777a";
+    this.hoverColor = "#73b1b7";
+    this.rowLength = 10;
+    this.numItems = 36;
+    this.element = $("#chart");
+    this.margin = 2;
+    this.dimensions = 15;
+    this.num = 0;
+    this.items = [];
+    return this;
+}
+
+Chart.prototype.setOption = function(option, value) {
+    this[option] = value;
+    return this;
+}
+
+Chart.prototype.render = function() {
+    $(this.element).append("<h3 class=\"chartTitle\">" +
+            this.title + "</h3>\n");
+    this.items = [];
+    for (var i = 0; i < this.numItems; i++) {
+        this.items[i] = new Box();
+    }
+    for (var i = 0; i < this.items.length; i++) {
+        var item = this.items[i];
+        if (i % this.rowLength === 0) {
+            $(this.element).append("<a class=\"box\""
+                    + " style=\"clear:both;\"></a>\n");
         } else {
-            var html = '';
-            html += '<div class="alert-message error">\n';
-            html += '\t' + '<p><strong>Uh oh!</strong> There is a problem with your input.</p>\n';
-            html += '</div>\n';
-            $('#boxmkr_preview_message_area').html(html).show('fast');
+            $(this.element).append("<a class=\"box\"></a>\n");
         }
-        // Return false to override default submit behavior
-        return false;
-    });
-    $('#boxmkr_form_add').click(function() {
-        if (performValidations()) {
-            addVisualization();
-        }
-        // Return false to override default submit behavior
-        return false;
-    });
-    $('#boxmkr_form_export').click(function() {
-        if (performValidations()) {
-            exportJSON();
-        }
-        // Return false to override default submit behavior
+    }
+    return this;
+}
+
+
+function Input() {
+    this.chart = new Array(new Chart());
+    this.chart[0].activeInput = true;
+    this.valid = true;
+    var that = this;
+    $('#boxmkr_form_submit').click(function() {
+        console.log("submit");
+         if (that.validateInput().valid) {
+             that.setActiveChartOptions();
+             that.render();
+             bcm.output.showHtml();
+         } else {
+             bcm.output.displayError("There is a problem with your input.");
+         }
         return false;
     });
     $('#boxmkr_toggle_advanced_options').click(function() {
-        if ($('#advanced_options').is(':visible')) {
+        if ($('#advanced_options').is(':visible')) { //TODO change these to jQuery toggles
             $('#advanced_options').hide('slow');
             $('#boxmkr_toggle_advanced_options').html('Show advanced options');
         } else {
@@ -56,306 +126,223 @@ $(document).ready(function() {
         }
         return false;
     });
-    
-    $("#colorpicker").farbtastic("#boxmkr_form_color");
-    $("#hovercolorpicker").farbtastic("#boxmkr_form_color_hover");
-    $('#colorpicker').hide();
-    $('#hovercolorpicker').hide();
-    $('#boxmkr_form_color').click(function() {
-        $('#colorpicker').toggle('slow');
+    $(document).click(function() {
+        $("#colorpicker").hide("slow");
+        $("#hovercolorpicker").hide("slow");
     });
-    $('#boxmkr_form_color_hover').click(function() {
-        $('#hovercolorpicker').toggle('slow');
+    $('#boxmkr_form_color').click(function(e) {
+        // Overrides document.click function
+        e.stopPropagation();
+        $('#colorpicker').show('slow');
+        $('#hovercolorpicker').hide('slow');
     });
-});
-
-function updatePreview() {
-    captureInput();
-    writeCSS();
-    writeJS();
-    var html = drawGraphic();
-    writeGraphic(html);
-    initBoxMkrHovers();
+    $('#boxmkr_form_color_hover').click(function(e) {
+        // Overrides document.click function
+        e.stopPropagation();
+        $('#hovercolorpicker').show('slow');
+        $('#colorpicker').hide('slow');
+    });
+    return this;
 }
 
-function addVisualization() {
-    captureInput();
-    visualizationHtml += drawGraphic();
-}
-
-function captureInput() {
-    jsonInput = $('#boxmkr_form_json_input').val();
-    if (jsonInput) {
-        parseJSON(jsonInput);
-    } else {
-        numBoxes = $('#boxmkr_form_numBoxes').val();
-        rowLength = $('#boxmkr_form_rowLength').val();
-        label = $('#boxmkr_form_label').val();
-        gravity = $('#boxmkr_form_gravity').val();
-        color = $('#boxmkr_form_color').val();
-        hoverColor = $('#boxmkr_form_color_hover').val();
-        boxDimensions = $('#boxmkr_form_box_dimensions').val();
-        boxMargin = $('#boxmkr_form_box_margin').val();
-        boxID = $('#boxmkr_form_box_id').val();
+Input.prototype.render = function() {
+    $(this.chart[0].element).empty(); //TODO make element a part of Input
+    for (var i = 0; i < this.chart.length; i++) {
+        this.chart[i].render();
+        $(this.chart[i].element).append(
+            "\n\n" +
+            "<style type=text/css>\n" +
+            "   .box {\n" +
+            "       float: left;\n" +
+            "       margin-right: " + this.chart[i].margin  + "px;\n" +
+            "       margin-bottom: " + this.chart[i].margin  + "px;\n" +
+            "       height: " + this.chart[i].dimensions  + "px;\n" +
+            "       width: " + this.chart[i].dimensions  + "px;\n" +
+            "       background-color: " + this.chart[i].color + ";\n" +
+            "   }\n" +
+            "   .box:hover {\n" +
+            "       background-color: " + this.chart[i].hoverColor + ";\n" +
+            "   }\n" +
+            "</style>\n"
+            );
     }
+    return this;
 }
 
-function createJSON() {
-    var json = [];
-    json.push(
-        {
-            "boxmkr": {
-                "numBoxes": numBoxes,
-                "rowLength": rowLength,
-                "label": label,
-                "gravity": gravity,
-                "color": color,
-                "hoverColor": hoverColor,
-                "boxDimensions": boxDimensions,
-                "boxMargin": boxMargin,
-                "boxID": boxID
-            }
-        }
-    );
-    $("#boxmkr_embed_json").html("<pre>" + JSON.stringify(json) + "</pre>");
-}
-
-function exportJSON() {
-    captureInput();
-    createJSON();
-}
-
-function parseJSON(jsonInput) {
-    var obj = $.parseJSON(jsonInput);
-    for (var info in obj) {
-        console.log(obj[info]);
-        if (obj.hasOwnProperty(info)) {
-            boxChart = obj[info];
-            numBoxes = boxChart.boxDimensions;
-            rowLength = boxChart.rowLength;
-            label = boxChart.label;
-            gravity = boxChart.gravity;
-            color = boxChart.color;
-            hoverColor = boxChart.hoverColor;
-            boxDimensions = boxChart.boxDimensions;
-            boxMargin = boxChart.boxMargin;
-            boxID = boxChart.boxID;
+Input.prototype.setActiveChartOptions = function() {
+    var activeChart;
+    for (var i = 0; i < this.chart.length; i++) {
+        if (this.chart[i].activeInput) {
+            activeChart = this.chart[i];
+            // TODO add break?
         }
     }
+    activeChart.setOption("numItems", $("#boxmkr_form_numBoxes").val());
+    activeChart.setOption("rowLength", $("#boxmkr_form_rowLength").val());
+    activeChart.setOption("title", $("#boxmkr_form_label").val());
+    activeChart.setOption("gravity", $("#boxmkr_form_gravity").val());
+    activeChart.setOption("color", $("#boxmkr_form_color").val());
+    activeChart.setOption("hoverColor", $("#boxmkr_form_color_hover").val());
+    activeChart.setOption("margin", $("#boxmkr_form_box_margin").val());
+    activeChart.setOption("dimensions",
+            $("#boxmkr_form_box_dimensions").val());
+    return this;
 }
 
-function writeCSS() {
-    var html = '';
-    html += '<style type="text/css">\n';
-    html += '#boxmkr_' + boxID + ' .boxmkr_box { \n';
-    html += '\t' + 'float: left;\n';
-    html += '\t' + 'background-color: ' + color + ';\n';
-    html += '\t' + 'height: ' + boxDimensions + 'px;\n';
-    html += '\t' + 'width: ' + boxDimensions + 'px;\n';
-    html += '\t' + 'margin-left: ' + boxMargin + 'px;\n';
-    html += '\t' + 'margin-bottom: ' + boxMargin + 'px;\n';
-    html += '}\n';
-    html += '#boxmkr_' + boxID + ' .boxmkr_box.boxmkr_hover { \n';
-    html += '\t' + 'background-color: ' + hoverColor + ';\n';
-    html += '}\n';
-    html += '#boxmkr_' + boxID + ' .boxmkr_box.boxmkr_beginner { \n';
-    html += '\t' + 'clear:both;\n';
-    html += '}\n';
-    html += '#boxmkr_' + boxID + ' .boxmkr_label { \n';
-    html += '\t' + 'clear: both;\n';
-    html += '\t' + 'font-family: arial,sans-serif;\n';
-    html += '\t' + 'font-size: 13px;\n';
-    html += '\t' + 'font-weight: bold;\n';
-    html += '\t' + 'text-align: center;\n';
-    html += '}\n';
-    html += '#boxmkr_' + boxID + ' { \n';
-    html += '\t' + 'width: ' + parseInt(rowLength) * (parseInt(boxDimensions) + parseInt(boxMargin)) + 'px;\n';
-    html += '}\n';
-    html += '</style>\n';
-    $('#boxmkr_css').html(html);
-    $('#boxmkr_embed_css').html('<pre>' + $('<div/>').text(html).html() + '</pre>');
-    return html;
-}
-
-function writeJS() {
-    var html = '';
-    html = '<script type="text/javascript">\n';
-    html += '$(document).ready(function() {\n';
-    html += '\t' + 'initBoxMkrHovers();\n';
-    html += '});\n';
-    html += initBoxMkrHovers;
-    html += '\n' + '</script>';
-    $('#boxmkr_embed_js').html('<pre>' + $('<div/>').text(html).html() + '</pre>');
-    return html;
-}
-
-function writeGraphic(html) {
-    $('#boxmkr_embed_html').html('<pre>' + $('<div/>').text(html).html() + '</pre>');
-}
-
-function drawGraphic() {
-    var html = '';
-    html += '<div class="boxmkr_wrapper" id="' + 'boxmkr_' + boxID + '">\n';
-    var boxesLeft = numBoxes;
-    var numRows = Math.floor(numBoxes / rowLength);
-    var numStragglers = numBoxes % rowLength;
-    
-    if (gravity == 'upper-left') {
-        html += writeFullRows(numRows, rowLength);
-        html += writeStragglers(numStragglers);
-    } else if (gravity == 'lower-left') {
-        html += writeStragglers(numStragglers);
-        html += writeFullRows(numRows, rowLength);
-    }
-
-    html += '\t<div class="boxmkr_label">' + label + '</div>\n';
-    html += '</div>\n'; // closes .boxmkr_wrapper
-    $('#boxmkr_target').html(html);
-    return html;
-}
-
-function writeFullRows(numRows, rowLength) {
-    var html = '';
-    if (numRows > 0) {
-        for (var i = 0; i < numRows; i++) {
-            // Write the leading box
-            html += '\t<div class="boxmkr_box boxmkr_beginner"></div>\n';
-            // Since we wrote the leading box, skip one
-            for (var j = 0; j < rowLength - 1; j++) {
-                html += '\t<div class="boxmkr_box"></div>\n';
-            }
-        }
-    }
-    return html;
-}
-
-function writeStragglers(numStragglers) {
-    var html = '';
-    if (numStragglers > 0) {
-        var html = '';
-        html += '\t<div class="boxmkr_box boxmkr_beginner"></div>\n';
-        for (var i = 0; i < numStragglers - 1; i++) {
-            html += '\t<div class="boxmkr_box"></div>\n';
-        }
-    }
-    return html;
-}
-
-function initBoxMkrHovers() {
-    $('.boxmkr_box').hover(
-     function() {
-            $(this).addClass('boxmkr_hover');
-        },
-        function() {
-            $(this).removeClass('boxmkr_hover');
-        }
-    );
-}
-
-function initValidation() {
+Input.prototype.initValidation = function() {
+    var that = this;
     $('#boxmkr_form_numBoxes').change(function() {
-        clearPreviewMessages();
-        validateNum(0, 1000, $('#boxmkr_form_numBoxes').val(), '#boxmkr_form_numBoxes');
+        bcm.output.clearError();
+        that.validateNum(0, 1000, $('#boxmkr_form_numBoxes').val(),
+                '#boxmkr_form_numBoxes');
     });
     $('#boxmkr_form_rowLength').change(function() {
-        clearPreviewMessages();
-        validateNum(0, 100, $('#boxmkr_form_rowLength').val(), '#boxmkr_form_rowLength');
+        bcm.output.clearError();
+        that.validateNum(0, 100, $('#boxmkr_form_rowLength').val(),
+                '#boxmkr_form_rowLength');
     });
     $('#boxmkr_form_label').change(function() {
-        clearPreviewMessages();
-        validateLabel($('#boxmkr_form_label').val(), '#boxmkr_form_label');
+        bcm.output.clearError();
+        that.validateLabel($('#boxmkr_form_label').val(), '#boxmkr_form_label');
     });
     $('#boxmkr_form_color').change(function() {
-        clearPreviewMessages();
-        validateHex($('#boxmkr_form_color').val(), '#boxmkr_form_color');
+        bcm.output.clearError();
+        that.validateHex($('#boxmkr_form_color').val(), '#boxmkr_form_color');
     });
     $('#boxmkr_form_color_hover').change(function() {
-        clearPreviewMessages();
-        validateHex($('#boxmkr_form_color_hover').val(), '#boxmkr_form_color_hover');
+        bcm.output.clearError();
+        that.validateHex($('#boxmkr_form_color_hover').val(),
+                '#boxmkr_form_color_hover');
     });
     $('#boxmkr_form_box_dimensions').change(function() {
-        clearPreviewMessages();
-        validateNum(0, 100, $('#boxmkr_form_box_dimensions').val(), '#boxmkr_form_box_dimensions');
+        bcm.output.clearError();
+        that.validateNum(0, 100, $('#boxmkr_form_box_dimensions').val(),
+                '#boxmkr_form_box_dimensions');
     });
    $('#boxmkr_form_box_margin').change(function() {
-       clearPreviewMessages();
-        validateNum(0, 25, $('#boxmkr_form_box_margin').val(), '#boxmkr_form_box_margin');
+       bcm.output.clearError();
+        that.validateNum(0, 25, $('#boxmkr_form_box_margin').val(),
+                '#boxmkr_form_box_margin');
     });
+   return this;
 }
 
-function performValidations() {
-    valid = true;
-    if (valid && !validateNum(0, 1000, $('#boxmkr_form_numBoxes').val(), '#boxmkr_form_numBoxes')) {
-        valid = false;
+Input.prototype.validateInput = function() {
+    this.valid = true;
+    if (this.valid && !this.validateNum(0, 1000,
+                $('#boxmkr_form_numBoxes').val(), '#boxmkr_form_numBoxes')) {
+        this.valid = false;
     }
-    if (valid && !validateNum(0, 100, $('#boxmkr_form_rowLength').val(), '#boxmkr_form_rowLength')) {
-        valid = false;
+    if (this.valid && !this.validateNum(0, 100,
+                $('#boxmkr_form_rowLength').val(), '#boxmkr_form_rowLength')) {
+        this.valid = false;
     }
-    if (valid && !validateLabel($('#boxmkr_form_label').val(), '#boxmkr_form_label')) {
-        valid = false;
+    if (this.valid && !this.validateLabel($('#boxmkr_form_label').val(),
+                '#boxmkr_form_label')) {
+        this.valid = false;
     }
-    if (valid && !validateHex($('#boxmkr_form_color').val(), '#boxmkr_form_color')) {
-        valid = false;
+    if (this.valid && !this.validateHex($('#boxmkr_form_color').val(),
+                '#boxmkr_form_color')) {
+        this.valid = false;
     }
-    if (valid && !validateHex($('#boxmkr_form_color_hover').val(), '#boxmkr_form_color_hover')) {
-        valid = false;
+    if (this.valid && !this.validateHex($('#boxmkr_form_color_hover').val(),
+                '#boxmkr_form_color_hover')) {
+        this.valid = false;
     }
-    if (valid && !validateHex($('#boxmkr_form_color_hover').val(), '#boxmkr_form_color_hover')) {
-        valid = false;
+    if (this.valid && !this.validateNum(0, 100,
+                $('#boxmkr_form_box_dimensions').val(),
+                '#boxmkr_form_box_dimensions')) {
+        this.valid = false;
     }
-    if (valid && !validateNum(0, 100, $('#boxmkr_form_box_dimensions').val(), '#boxmkr_form_box_dimensions')) {
-        valid = false;
+    if (this.valid && !this.validateNum(0, 25,
+                $('#boxmkr_form_box_margin').val(),
+                '#boxmkr_form_box_margin')) {
+        this.valid = false;
     }
-    if (valid && !validateNum(0, 25, $('#boxmkr_form_box_margin').val(), '#boxmkr_form_box_margin')) {
-        valid = false;
-    }
-    return valid;
+    return this;
 }
 
-function validateNum(min, max, value, selector) {
-    clearInputFeedback(selector);
+Input.prototype.validateNum = function(min, max, value, selector) {
+    console.log("validateNum");
+    this.clearInputFeedback(selector);
     var re = /^[0-9]+$/;
     if (value >= min && value <= max && re.exec(value)) {
         //addInputFeedback(selector, 'success');
         return true;
     } else {
-        addInputFeedback(selector, 'error');
+        this.addInputFeedback(selector, 'error');
         return false;
     }
 }
 
-function validateHex(value, selector) {
-    clearInputFeedback(selector);
+Input.prototype.validateHex = function(value, selector) {
+    this.clearInputFeedback(selector);
     var re = /^#([A-Za-z0-9]{6})$/;
     if (re.exec(value)) {
         //addInputFeedback(selector, 'success');
         return true;
     } else {
-        addInputFeedback(selector, 'error');
+        this.addInputFeedback(selector, 'error');
         return false;
     }
 }
 
-function validateLabel(value, selector) {
-    clearInputFeedback(selector);
+Input.prototype.validateLabel = function(value, selector) {
+    this.clearInputFeedback(selector);
     var re = /^[^<>]*$/;
     if (re.exec(value)) {
         //addInputFeedback(selector, 'success');
         return true;
     } else {
-        addInputFeedback(selector, 'error');
+        this.addInputFeedback(selector, 'error');
         return false;
     }
 }
 
-function clearInputFeedback(selector) {
-    $(selector).parents('.clearfix.boxmkr_input').removeClass('error').removeClass('success');
+Input.prototype.clearInputFeedback = function(selector) {
+    $(selector).parents('.clearfix.boxmkr_input')
+            .removeClass('error')
+            .removeClass('success');
+    return this;
 }
 
-function addInputFeedback(selector, feedback) {
+Input.prototype.addInputFeedback = function(selector, feedback) {
     $(selector).parents('.clearfix.boxmkr_input').addClass(feedback);
+    return this;
 }
 
-function clearPreviewMessages() {
-    $('#boxmkr_preview_message_area').hide('fast');
+
+function Output() {
+    this.element = $("#output");
+    this.errorElement = $("#error");
+    return this;
 }
+
+Output.prototype.showHtml = function() {
+    $(this.element).html("<pre>" +
+             $("<div/>").text($(window.bcm.input.chart[0].element).html())
+                    .html() + "</pre>");
+    return this;
+}
+
+Output.prototype.displayError = function(description) {
+    var message = "<div class=\"alert-message error\">"
+            +  "<p><strong>Uh oh!</strong> " + description + "</p></div>";
+    $(this.errorElement).html(message).show("fast");
+    return this;
+}
+
+Output.prototype.clearError = function() {
+    $(this.errorElement).hide("slow").empty();
+    return this;
+}
+
+Output.prototype.initUI = function() {
+    $(this.errorElement).hide();
+    $("#colorpicker").farbtastic("#boxmkr_form_color");
+    $("#hovercolorpicker").farbtastic("#boxmkr_form_color_hover");
+    $('#colorpicker').hide();
+    $('#hovercolorpicker').hide();
+    return this;
+}
+

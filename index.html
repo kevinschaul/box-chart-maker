@@ -61,14 +61,6 @@
 
     </style>
     
-    <style type="text/css">
-
-</style>
-    
-    <script type="text/javascript" src="js/lib/jquery.min.js"></script>
-    <script type="text/javascript" src="js/lib/farbtastic/farbtastic.js"></script>
-    <script type="text/javascript" src="js/logic.js"></script>
-
   </head>
 
   <body>
@@ -101,9 +93,11 @@
         <div class="row">
             <div class="span16">
                 <h3>Preview</h3>
+                <div id="error"></div>
                 <div id="boxmkr_preview_message_area"></div>
                 <div id="boxmkr_css"></div>
                 <div id="boxmkr_target"></div>
+                <div id="chart"></div>
             </div>
         </div>
         <div class="row">
@@ -121,17 +115,26 @@
                             </div>
                         </div>
                         <div class="clearfix boxmkr_input">
-                            <label for="boxmkr_form_rowLength">Row length</label>
-                            <div class="input">
-                                <input type="text" class="span2" id="boxmkr_form_rowLength" value="10">
-                            </div>
-                        </div>
-                        <div class="clearfix boxmkr_input">
                             <label for="boxmkr_form_label">Label</label>
                             <div class="input">
                                 <input type="text" id="boxmkr_form_label" value="Data title">
                             </div>
                         </div>
+                        <div class="clearfix boxmkr_input">
+                            <label for="boxmkr_form_color">Color</label>
+                            <div class="input">
+                                <input type="text" id="boxmkr_form_color" value="#4a777a">
+                                <div id="colorpicker"></div>
+                            </div>
+                        </div>
+                        <div class="clearfix boxmkr_input">
+                            <label for="boxmkr_form_color_hover">Hover color</label>
+                            <div class="input">
+                                <input type="text" id="boxmkr_form_color_hover" value="#73b1b7">
+                                <div id="hovercolorpicker"></div>
+                            </div>
+                        </div>
+
                     </div>
                     <a href="#" id="boxmkr_toggle_advanced_options">Show advanced options</a>
                 </div>
@@ -139,36 +142,7 @@
                     <div id="advanced_options_header">
                         <h4>Advanced options</h4>
                     </div>
-                    <div class="clearfix boxmkr_input">
-                            <label for="boxmkr_form_box_id">Box ID</label>
-                            <div class="input">
-                                <input type="text" id="boxmkr_form_box_id" value="box1">
-                            </div>
-                        </div>
-                    <div class="clearfix boxmkr_input">
-                            <label for="boxmkr_form_gravity">Gravity direction</label>
-                            <div class="input">
-                                <select class="medium" id="boxmkr_form_gravity">
-                                    <option value="lower-left">Lower left</option>
-                                    <option value="upper-left">Upper left</option>
-                                </select>
-                            </div>
-                        </div>
                     <div class="boxmkr_form">
-                        <div class="clearfix boxmkr_input">
-                            <label for="boxmkr_form_color">Color</label>
-                            <div class="input">
-                                <input type="text" id="boxmkr_form_color" value="#4A777A">
-                                <div id="colorpicker"></div>
-                            </div>
-                        </div>
-                        <div class="clearfix boxmkr_input">
-                            <label for="boxmkr_form_color_hover">Hover color</label>
-                            <div class="input">
-                                <input type="text" id="boxmkr_form_color_hover" value="#73B1B7">
-                                <div id="hovercolorpicker"></div>
-                            </div>
-                        </div>
                         <div class="clearfix boxmkr_input">
                             <label for="boxmkr_form_box_dimensions">Box dimensions (px)</label>
                             <div class="input">
@@ -176,17 +150,18 @@
                             </div>
                         </div>
                         <div class="clearfix boxmkr_input">
-                            <label for="boxmkr_form_box_padding">Box margin (px)</label>
+                            <label for="boxmkr_form_box_margin">Box margin (px)</label>
                             <div class="input">
                                 <input type="text" class="span2" id="boxmkr_form_box_margin" value="2">
                             </div>
                         </div>
                         <div class="clearfix boxmkr_input">
-                            <label for="bmkr_form_json_input">JSON input</label>
+                            <label for="boxmkr_form_rowLength">Row length</label>
                             <div class="input">
-                                <textarea id="boxmkr_form_json_input" rows="5"></textarea>
+                                <input type="text" class="span2" id="boxmkr_form_rowLength" value="10">
                             </div>
                         </div>
+
                     </div>
                 </div>
                 <div class="span16">
@@ -207,6 +182,7 @@
               </div>
               <div class="span16" id="embed_code">
                 <h3>Embed code</h3>
+                <div id="output"></div>
                 <div id="boxmkr_embed_json"></div>
                 <div id="boxmkr_embed_css"></div>
                 <div id="boxmkr_embed_js"></div>
@@ -222,5 +198,9 @@
 
     </div> <!-- /container -->
 
+    <script type="text/javascript" src="js/lib/jquery.min.js"></script>
+    <script type="text/javascript" src="js/lib/farbtastic/farbtastic.js"></script>
+    <script type="text/javascript" src="js/logic.js"></script>
+    
   </body>
 </html>
