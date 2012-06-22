@@ -126,6 +126,9 @@ function Input() {
         }
         return false;
     });
+    $("#output").click(function() {
+        this.select();
+    });
     $(document).click(function() {
         $("#colorpicker").hide("slow");
         $("#hovercolorpicker").hide("slow");
