@@ -266,7 +266,6 @@ Input.prototype.validateInput = function() {
 }
 
 Input.prototype.validateNum = function(min, max, value, selector) {
-    console.log("validateNum");
     this.clearInputFeedback(selector);
     var re = /^[0-9]+$/;
     if (value >= min && value <= max && re.exec(value)) {
@@ -303,14 +302,14 @@ Input.prototype.validateLabel = function(value, selector) {
 }
 
 Input.prototype.clearInputFeedback = function(selector) {
-    $(selector).parents('.clearfix.boxmkr_input')
+    $(selector).parents('.control-group')
             .removeClass('error')
             .removeClass('success');
     return this;
 }
 
 Input.prototype.addInputFeedback = function(selector, feedback) {
-    $(selector).parents('.clearfix.boxmkr_input').addClass(feedback);
+    $(selector).parents('.control-group').addClass(feedback);
     return this;
 }
 
@@ -329,7 +328,7 @@ Output.prototype.showHtml = function() {
 }
 
 Output.prototype.displayError = function(description) {
-    var message = "<div class=\"alert-message error\">"
+    var message = "<div class=\"alert alert-error\">"
             +  "<p><strong>Uh oh!</strong> " + description + "</p></div>";
     $(this.errorElement).html(message).show("fast");
     return this;
