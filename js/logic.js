@@ -321,9 +321,9 @@ function Output() {
 }
 
 Output.prototype.showHtml = function() {
-    $(this.element).html("<pre>" +
-             $("<div/>").text($(window.bcm.input.chart[0].element).html())
-                    .html() + "</pre>");
+    $(this.element).html(
+            $("<div/>").text($(window.bcm.input.chart[0].element).html()).html()
+    );
     return this;
 }
 
