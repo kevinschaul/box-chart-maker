@@ -104,6 +104,15 @@
                                 <fieldset>
                                     <legend>Advanced options</legend>
                                     <div class="control-group">
+                                        <label class="control-label" for="boxmkr_form_vis_engine">Visualization engine</label>
+                                        <div class="controls">
+                                            <select class="span2" id="boxmkr_form_vis_engine" value="html">
+                                                <option>html</option>
+                                                <option>Raphael</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="control-group">
                                         <label class="control-label" for="boxmkr_form_box_dimensions">Box dimensions (px)</label>
                                         <div class="controls">
                                             <input type="text" class="span2" id="boxmkr_form_box_dimensions" value="15">
@@ -160,6 +169,7 @@
 
     <script type="text/javascript" src="lib/jquery.min.js"></script>
     <script type="text/javascript" src="lib/farbtastic/farbtastic.js"></script>
+    <script type="text/javascript" src="lib/raphael-min.js"></script>
     <script type="text/javascript" src="js/logic.js"></script>
 
 </body>

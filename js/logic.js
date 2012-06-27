@@ -60,6 +60,7 @@ function Chart() {
     this.element = $("#chart");
     this.margin = 2;
     this.dimensions = 15;
+    this.visEngine = "html";
     this.num = 0;
     this.items = [];
     return this;
@@ -71,20 +72,26 @@ Chart.prototype.setOption = function(option, value) {
 }
 
 Chart.prototype.render = function() {
-    $(this.element).append("<h3 class=\"chartTitle\">" +
-            this.title + "</h3>\n");
-    this.items = [];
-    for (var i = 0; i < this.numItems; i++) {
-        this.items[i] = new Box();
-    }
-    for (var i = 0; i < this.items.length; i++) {
-        var item = this.items[i];
-        if (i % this.rowLength === 0) {
-            $(this.element).append("<a class=\"box\""
-                    + " style=\"clear:both;\"></a>\n");
-        } else {
-            $(this.element).append("<a class=\"box\"></a>\n");
+    if (this.visEngine === "html") {
+        $(this.element).append("<h3 class=\"chartTitle\">" +
+                this.title + "</h3>\n");
+        this.items = [];
+        for (var i = 0; i < this.numItems; i++) {
+            this.items[i] = new Box();
         }
+        for (var i = 0; i < this.items.length; i++) {
+            var item = this.items[i];
+            if (i % this.rowLength === 0) {
+                $(this.element).append("<a class=\"box\""
+                        + " style=\"clear:both;\"></a>\n");
+            } else {
+                $(this.element).append("<a class=\"box\"></a>\n");
+            }
+        }
+    } else if (this.visEngine === "Raphael") {
+        alert('Raphael - not yet implemented');
+    } else {
+        bcm.output.displayError("Invalid visEngine: " + this.visEngine);
     }
     return this;
 }
@@ -96,7 +103,7 @@ function Input() {
     this.valid = true;
     var that = this;
     $('#boxmkr_form_submit').click(function() {
-        console.log("submit");
+        bcm.output.clearError();
          if (that.validateInput().valid) {
              that.setActiveChartOptions();
              that.render();
@@ -189,6 +196,7 @@ Input.prototype.setActiveChartOptions = function() {
     activeChart.setOption("margin", $("#boxmkr_form_box_margin").val());
     activeChart.setOption("dimensions",
             $("#boxmkr_form_box_dimensions").val());
+    activeChart.setOption("visEngine", $("#boxmkr_form_vis_engine").val());
     return this;
 }
 
@@ -222,12 +230,12 @@ Input.prototype.initValidation = function() {
         that.validateNum(0, 100, $('#boxmkr_form_box_dimensions').val(),
                 '#boxmkr_form_box_dimensions');
     });
-   $('#boxmkr_form_box_margin').change(function() {
+    $('#boxmkr_form_box_margin').change(function() {
        bcm.output.clearError();
         that.validateNum(0, 25, $('#boxmkr_form_box_margin').val(),
                 '#boxmkr_form_box_margin');
     });
-   return this;
+    return this;
 }
 
 Input.prototype.validateInput = function() {
