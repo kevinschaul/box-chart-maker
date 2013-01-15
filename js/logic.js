@@ -74,8 +74,9 @@ Chart.prototype.setOption = function(option, value) {
 
 Chart.prototype.render = function() {
     if (this.visEngine === "html") {
-        $(this.element).append("<div id=\"" + this.id + "\">\n"
-                + "<h3 class=\"chartTitle\">" + this.title + "</h3>\n");
+        var html = "";
+        html += "<div id=\"" + this.id + "\">\n"
+                + "<h3 class=\"chartTitle\">" + this.title + "</h3>\n";
         this.items = [];
         for (var i = 0; i < this.numItems; i++) {
             this.items[i] = new Box();
@@ -83,16 +84,17 @@ Chart.prototype.render = function() {
         for (var i = 0; i < this.items.length; i++) {
             var item = this.items[i];
             if (i % this.rowLength === 0) {
-                $(this.element).append("<a class=\"box\""
+                html += "<a class=\"box\""
                         + "id=\"" + this.id + "\""
-                        + " style=\"clear:both;\"></a>\n");
+                        + " style=\"clear:both;\"></a>\n";
             } else {
-                $(this.element).append("<a class=\"box\""
+                html += "<a class=\"box\""
                         + "id=\"" + this.id + "\""
-                        + "></a>\n");
+                        + "></a>\n";
             }
         }
-        $(this.element).append("</div>");
+        html += "<div class=\"clear\"></div></div>";
+        $(this.element).append(html);
     } else if (this.visEngine === "Raphael") {
         alert('Raphael - not yet implemented');
     } else {
@@ -167,6 +169,7 @@ Input.prototype.render = function() {
         $(this.chart[i].element).append(
             "\n\n" +
             "<style type=text/css>\n" +
+            "   .clear { clear: both; }\n" +
             "   .box#" + this.chart[i].id + " {\n" +
             "       float: left;\n" +
             "       margin-right: " + this.chart[i].margin  + "px;\n" +

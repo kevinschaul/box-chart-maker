@@ -1,3 +1,5 @@
+.clear { clear: both; }
+
 #advanced_options {
     display: none;
 }
