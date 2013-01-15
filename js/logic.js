@@ -61,6 +61,7 @@ function Chart() {
     this.margin = 2;
     this.dimensions = 15;
     this.visEngine = "html";
+    this.id = "box_id";
     this.num = 0;
     this.items = [];
     return this;
@@ -73,8 +74,8 @@ Chart.prototype.setOption = function(option, value) {
 
 Chart.prototype.render = function() {
     if (this.visEngine === "html") {
-        $(this.element).append("<h3 class=\"chartTitle\">" +
-                this.title + "</h3>\n");
+        $(this.element).append("<div id=\"" + this.id + "\">\n"
+                + "<h3 class=\"chartTitle\">" + this.title + "</h3>\n");
         this.items = [];
         for (var i = 0; i < this.numItems; i++) {
             this.items[i] = new Box();
@@ -83,11 +84,15 @@ Chart.prototype.render = function() {
             var item = this.items[i];
             if (i % this.rowLength === 0) {
                 $(this.element).append("<a class=\"box\""
+                        + "id=\"" + this.id + "\""
                         + " style=\"clear:both;\"></a>\n");
             } else {
-                $(this.element).append("<a class=\"box\"></a>\n");
+                $(this.element).append("<a class=\"box\""
+                        + "id=\"" + this.id + "\""
+                        + "></a>\n");
             }
         }
+        $(this.element).append("</div>");
     } else if (this.visEngine === "Raphael") {
         alert('Raphael - not yet implemented');
     } else {
@@ -162,7 +167,7 @@ Input.prototype.render = function() {
         $(this.chart[i].element).append(
             "\n\n" +
             "<style type=text/css>\n" +
-            "   .box {\n" +
+            "   .box#" + this.chart[i].id + " {\n" +
             "       float: left;\n" +
             "       margin-right: " + this.chart[i].margin  + "px;\n" +
             "       margin-bottom: " + this.chart[i].margin  + "px;\n" +
@@ -170,7 +175,7 @@ Input.prototype.render = function() {
             "       width: " + this.chart[i].dimensions  + "px;\n" +
             "       background-color: " + this.chart[i].color + ";\n" +
             "   }\n" +
-            "   .box:hover {\n" +
+            "   .box#" + this.chart[i].id + ":hover {\n" +
             "       background-color: " + this.chart[i].hoverColor + ";\n" +
             "   }\n" +
             "</style>\n"
@@ -196,6 +201,7 @@ Input.prototype.setActiveChartOptions = function() {
     activeChart.setOption("margin", $("#boxmkr_form_box_margin").val());
     activeChart.setOption("dimensions",
             $("#boxmkr_form_box_dimensions").val());
+    activeChart.setOption("id", $("#boxmkr_form_id").val());
     activeChart.setOption("visEngine", $("#boxmkr_form_vis_engine").val());
     return this;
 }
