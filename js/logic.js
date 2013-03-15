@@ -62,6 +62,7 @@ function Chart() {
     this.dimensions = 15;
     this.visEngine = "html";
     this.id = "box_id";
+    this.numberInTitle = false;
     this.num = 0;
     this.items = [];
     return this;
@@ -76,7 +77,11 @@ Chart.prototype.render = function() {
     if (this.visEngine === "html") {
         var html = "";
         html += "<div id=\"" + this.id + "\">\n"
-                + "<h3 class=\"chartTitle\">" + this.title + "</h3>\n";
+                + "<h3 class=\"chartTitle\">" + this.title;
+        if(this.numberInTitle === true){
+            html += ":&nbsp;<span>" + this.numItems + "</span>";
+        }
+        html += "</h3>\n";
         this.items = [];
         for (var i = 0; i < this.numItems; i++) {
             this.items[i] = new Box();
@@ -205,6 +210,7 @@ Input.prototype.setActiveChartOptions = function() {
     activeChart.setOption("dimensions",
             $("#boxmkr_form_box_dimensions").val());
     activeChart.setOption("id", $("#boxmkr_form_id").val());
+    activeChart.setOption("numberInTitle", $("#boxmkr_form_numberInTitle").is(':checked'));
     activeChart.setOption("visEngine", $("#boxmkr_form_vis_engine").val());
     return this;
 }
